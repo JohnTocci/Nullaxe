@@ -2,7 +2,8 @@ from .functions import(
 snakecase, camelcase, pascalcase,
 kebabcase, titlecase, lowercase,
 screaming_snakecase, clean_column_names,
-remove_duplicates)
+remove_duplicates, fill_missing, drop_missing,
+remove_whitespace, replace_text,)
 import pandas as pd
 import polars as pl
 from typing import Union
@@ -109,9 +110,44 @@ class Sanex:
         self._df = screaming_snakecase(self._df)
         return self
 
+    def fill_missing(self, value: Union[int, float, str] = 0, subset: list = None):
+        """
+        Fills missing values in the DataFrame with a specified value.
+
+        Parameters:
+        value (Union[int, float, str]): The value to replace missing values with. Default is 0.
+        subset (list): List of column names to consider for filling. Default is None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = fill_missing(self._df, value=value, subset=subset)
+        return self
+
+    def drop_missing(self, how: str = 'any', thresh: int = None, subset: list = None, axis: str = 'rows'):
+        """
+        Drops rows or columns with missing values from the DataFrame.
+
+        Parameters:
+        how (str): 'any' to drop if any NA values are present, 'all' to drop if all values are NA. Default is 'any'.
+        thresh (int): Require that many non-NA values to avoid dropping. Default is None.
+        subset (list): List of column names to consider for dropping. Default is None (all columns).
+        axis (str): 'rows' to drop rows, 'columns' to drop columns. Default is 'rows'.
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = drop_missing(self._df, how=how, thresh=thresh, subset=subset, axis=axis)
+        return self
+
     def to_df(self) -> DataFrameType:
         """
         Returns the final, cleaned DataFrame.
         """
         return self._df
+
 

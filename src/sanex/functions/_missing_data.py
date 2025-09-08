@@ -92,3 +92,4 @@ def fill_missing(df: DataFrameType, value: Union[int, float, str] = 0, subset: O
 
     else:
         raise TypeError("Input must be a pandas or polars DataFrame.")
+
