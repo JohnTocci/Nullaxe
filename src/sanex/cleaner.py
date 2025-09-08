@@ -5,10 +5,11 @@ from .functions import (
     remove_duplicates, fill_missing, drop_missing,
     remove_whitespace, replace_text, drop_single_value_columns,
     handle_outliers, cap_outliers, remove_outliers,
-    standardize_booleans)
+    standardize_booleans, remove_unwanted_rows_and_cols,
+    extract_and_clean_numeric)
 import pandas as pd
 import polars as pl
-from typing import Union
+from typing import Union, List, Optional
 
 DataFrameType = Union[pd.DataFrame, pl.DataFrame]
 
@@ -259,6 +260,38 @@ class Sanex:
         This is a chainable method.
         """
         self._df = standardize_booleans(self._df, true_values=true_values, false_values=false_values, subset=subset)
+        return self
+
+    def remove_unwanted_rows_and_cols(self, unwanted_values: Optional[List[Union[str, int, float]]] = None):
+        """
+        Removes rows and columns that contain only unwanted values from the DataFrame.
+
+        Parameters:
+        unwanted_values (List[Union[str, int, float]], optional): List of values considered unwanted.
+            Defaults to [None, '', 'NA', 'N/A', 'null', 'NULL', 'NaN'].
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_unwanted_rows_and_cols(self._df, unwanted_values=unwanted_values)
+        return self
+
+    def extract_and_clean_numeric(self, subset: Optional[List[str]] = None):
+        """
+        Extracts and cleans numeric data from string entries in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for numeric extraction.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = extract_and_clean_numeric(self._df, subset=subset)
         return self
 
     def to_df(self) -> DataFrameType:
