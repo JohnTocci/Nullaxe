@@ -158,7 +158,4 @@ def remove_outliers(df: DataFrameType, method: str = 'zscore', factor: float = 3
     DataFrameType: DataFrame with outlier rows removed.
     """
     return handle_outliers(df, method=method, factor=factor, subset=subset)
-#             for col in subset:
-#                 if col in df.columns:
-#                     df = df.with_column(pl.col(col).fill_null(value))
-#             return df
+

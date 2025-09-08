@@ -1,11 +1,11 @@
-from .functions import(
-snakecase, camelcase, pascalcase,
-kebabcase, titlecase, lowercase,
-screaming_snakecase, clean_column_names,
-remove_duplicates, fill_missing, drop_missing,
-remove_whitespace, replace_text, drop_single_value_columns,
-handle_outliers, cap_outliers, remove_outliers,
-standardize_booleans)
+from .functions import (
+    snakecase, camelcase, pascalcase,
+    kebabcase, titlecase, lowercase,
+    screaming_snakecase, clean_column_names,
+    remove_duplicates, fill_missing, drop_missing,
+    remove_whitespace, replace_text, drop_single_value_columns,
+    handle_outliers, cap_outliers, remove_outliers,
+    standardize_booleans)
 import pandas as pd
 import polars as pl
 from typing import Union

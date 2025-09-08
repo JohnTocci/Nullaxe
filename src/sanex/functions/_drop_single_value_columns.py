@@ -22,4 +22,3 @@ def drop_single_value_columns(df: DataFrameType) -> DataFrameType:
         return df.drop(cols_to_drop)
 
     raise TypeError("Input must be a pandas or polars DataFrame.")
-
