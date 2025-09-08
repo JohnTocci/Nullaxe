@@ -1,0 +1,58 @@
+[build-system]
+# Specifies the build tools needed for your package.
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+# Core metadata for your project.
+name = "sanex"
+version = "0.1.0"
+authors = [
+  { name="John Tocci", email="john@johntocci.com" },
+]
+description = "A data cleaning library for Pandas and Polars DataFrames with a simple, chainable API."
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.8"
+keywords = ["data cleaning", "pandas", "polars", "data science", "etl", "data processing"]
+classifiers = [
+    # Standard classifiers to help users find your project.
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Framework :: Pandas",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+# Required dependencies that will be installed with your package.
+dependencies = [
+    "pandas>=1.0",
+    "polars>=0.19",
+]
+
+[project.urls]
+# Links related to your project.
+Homepage = "https://github.com/johntocci/sanex"
+Repository = "https://github.com/johntocci/sanex"
+"Bug Tracker" = "https://github.com/johntocci/sanex/issues"
+
+[project.optional-dependencies]
+# Dependencies needed for development, testing, and releasing.
+# Install with: pip install -e .[dev]
+dev = [
+    "pytest>=7.0",  # For running tests.
+    "build>=0.10",  # For building the package.
+    "twine>=4.0",   # For uploading to PyPI.
+    "black>=23.0",  # For code formatting.
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
