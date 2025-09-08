@@ -8,8 +8,9 @@ from ._missing_data import fill_missing, drop_missing
 from ._whitespace import remove_whitespace
 from ._replace_text import replace_text
 from ._drop_single_value_columns import drop_single_value_columns
-from ._handle_outliers import handle_outliers
+from ._handle_outliers import handle_outliers, cap_outliers, remove_outliers
 from ._standardize_booleans import standardize_booleans
+from ._summarize_missing_data import missing_data_summary
 
 __all__ = [
     "clean_column_names",
@@ -28,5 +29,8 @@ __all__ = [
     "replace_text",
     "drop_single_value_columns",
     "handle_outliers",
-    "standardize_booleans"
+    "standardize_booleans",
+    "cap_outliers",
+    "remove_outliers",
+    "missing_data_summary"
 ]

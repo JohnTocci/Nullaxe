@@ -89,3 +89,76 @@ def handle_outliers(df: DataFrameType, method: str = 'zscore', factor: float = 3
         return df.filter(final_condition)
 
     raise TypeError("Input must be a pandas or polars DataFrame.")
+
+def cap_outliers(df: DataFrameType, method: str = 'zscore', factor: float = 3.0, subset: list = None) -> DataFrameType:
+    """
+    Caps outliers in the DataFrame by replacing them with threshold values.
+
+    Parameters:
+    df (DataFrameType): Input DataFrame.
+    method (str): Method to identify outliers. Options are 'zscore' or 'iqr'. Default is 'zscore'.
+    factor (float): Threshold for identifying outliers. For 'zscore', it's the number of standard deviations.
+                   For 'iqr', it's the multiplier for the interquartile range. Default is 3.0.
+    subset (list): List of column names to consider for outlier handling. Default is None (all numeric columns).
+
+    Returns:
+    DataFrameType: DataFrame with outliers capped at threshold values.
+    """
+    if isinstance(df, pd.DataFrame):
+        # Determine which columns to process
+        if subset:
+            # Filter subset to only include numeric columns that exist in the DataFrame
+            numeric_cols = [col for col in subset if col in df.columns and pd.api.types.is_numeric_dtype(df[col])]
+            if not numeric_cols:
+                # Return the original DataFrame if no valid numeric columns were found
+                return df
+        else:
+            numeric_cols = df.select_dtypes(include='number').columns
+
+        df_copy = df.copy()
+
+        if method == 'zscore':
+            for col in numeric_cols:
+                mean = df_copy[col].mean()
+                std = df_copy[col].std()
+                upper_bound = mean + (factor * std)
+                lower_bound = mean - (factor * std)
+
+                df_copy[col] = df_copy[col].clip(lower=lower_bound, upper=upper_bound)
+
+            return df_copy
+
+        elif method == 'iqr':
+            for col in numeric_cols:
+                Q1 = df_copy[col].quantile(0.25)
+                Q3 = df_copy[col].quantile(0.75)
+                IQR = Q3 - Q1
+                lower_bound = Q1 - (factor * IQR)
+                upper_bound = Q3 + (factor * IQR)
+
+                df_copy[col] = df_copy[col].clip(lower=lower_bound, upper=upper_bound)
+
+            return df_copy
+
+        else:
+            raise ValueError("Method must be either 'zscore' or 'iqr'.")
+
+def remove_outliers(df: DataFrameType, method: str = 'zscore', factor: float = 3.0, subset: list = None) -> DataFrameType:
+    """
+    Removes outliers from the DataFrame by dropping rows containing outliers.
+
+    Parameters:
+    df (DataFrameType): Input DataFrame.
+    method (str): Method to identify outliers. Options are 'zscore' or 'iqr'. Default is 'zscore'.
+    factor (float): Threshold for identifying outliers. For 'zscore', it's the number of standard deviations.
+                   For 'iqr', it's the multiplier for the interquartile range. Default is 3.0.
+    subset (list): List of column names to consider for outlier handling. Default is None (all numeric columns).
+
+    Returns:
+    DataFrameType: DataFrame with outlier rows removed.
+    """
+    return handle_outliers(df, method=method, factor=factor, subset=subset)
+#             for col in subset:
+#                 if col in df.columns:
+#                     df = df.with_column(pl.col(col).fill_null(value))
+#             return df

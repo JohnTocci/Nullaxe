@@ -4,7 +4,8 @@ kebabcase, titlecase, lowercase,
 screaming_snakecase, clean_column_names,
 remove_duplicates, fill_missing, drop_missing,
 remove_whitespace, replace_text, drop_single_value_columns,
-handle_outliers, standardize_booleans)
+handle_outliers, cap_outliers, remove_outliers,
+standardize_booleans)
 import pandas as pd
 import polars as pl
 from typing import Union
@@ -203,6 +204,44 @@ class Sanex:
         This is a chainable method.
         """
         self._df = handle_outliers(self._df, method=method, factor=factor, subset=subset)
+        return self
+
+    def cap_outliers(self, method: str = 'iqr', factor: float = 1.5, subset: list = None):
+        """
+        Caps outliers in the DataFrame using the specified method.
+
+        Parameters:
+        method (str): The method to use for capping outliers. Default is 'iqr'.
+                      Supported methods include 'iqr' (Interquartile Range) and 'zscore' (Z-Score).
+        factor (float): The factor to use for determining outlier thresholds. Default is 1.5.
+                        For 'iqr', this is the multiplier for the IQR. For 'zscore', this is the Z-Score threshold.
+        subset (list): List of column names to consider for outlier capping. Default is None (all numeric columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = cap_outliers(self._df, method=method, factor=factor, subset=subset)
+        return self
+
+    def remove_outliers(self, method: str = 'iqr', factor: float = 1.5, subset: list = None):
+        """
+        Removes outliers from the DataFrame using the specified method.
+
+        Parameters:
+        method (str): The method to use for removing outliers. Default is 'iqr'.
+                      Supported methods include 'iqr' (Interquartile Range) and 'zscore' (Z-Score).
+        factor (float): The factor to use for determining outlier thresholds. Default is 1.5.
+                        For 'iqr', this is the multiplier for the IQR. For 'zscore', this is the Z-Score threshold.
+        subset (list): List of column names to consider for outlier removal. Default is None (all numeric columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_outliers(self._df, method=method, factor=factor, subset=subset)
         return self
 
     def standardize_booleans(self, true_values: list = None, false_values: list = None, subset: list = None):
