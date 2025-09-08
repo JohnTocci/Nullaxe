@@ -24,3 +24,4 @@ def remove_duplicates(df: DataFrameType) -> DataFrameType:
         raise TypeError("Input must be a pandas or polars DataFrame.")
 
     return df
+
