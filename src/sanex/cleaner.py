@@ -3,7 +3,8 @@ snakecase, camelcase, pascalcase,
 kebabcase, titlecase, lowercase,
 screaming_snakecase, clean_column_names,
 remove_duplicates, fill_missing, drop_missing,
-remove_whitespace, replace_text, drop_single_value_columns)
+remove_whitespace, replace_text, drop_single_value_columns,
+handle_outliers, standardize_booleans)
 import pandas as pd
 import polars as pl
 from typing import Union
@@ -185,10 +186,44 @@ class Sanex:
         self._df = drop_single_value_columns(self._df)
         return self
 
+    def handle_outliers(self, method: str = 'iqr', factor: float = 1.5, subset: list = None):
+        """
+        Handles outliers in the DataFrame using the specified method.
+
+        Parameters:
+        method (str): The method to use for handling outliers. Default is 'iqr'.
+                      Supported methods include 'iqr' (Interquartile Range) and 'zscore' (Z-Score).
+        factor (float): The factor to use for determining outlier thresholds. Default is 1.5.
+                        For 'iqr', this is the multiplier for the IQR. For 'zscore', this is the Z-Score threshold.
+        subset (list): List of column names to consider for outlier handling. Default is None (all numeric columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = handle_outliers(self._df, method=method, factor=factor, subset=subset)
+        return self
+
+    def standardize_booleans(self, true_values: list = None, false_values: list = None, subset: list = None):
+        """
+        Standardizes boolean-like values in the DataFrame to actual boolean types.
+
+        Parameters:
+        true_values (list): List of values to be considered as True. Default is ['yes', 'y', 'true', 't', '1'].
+        false_values (list): List of values to be considered as False. Default is ['no', 'n', 'false', 'f', '0'].
+        subset (list): List of column names to consider for boolean standardization. Default is None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = standardize_booleans(self._df, true_values=true_values, false_values=false_values, subset=subset)
+        return self
+
     def to_df(self) -> DataFrameType:
         """
         Returns the final, cleaned DataFrame.
         """
         return self._df
-
-

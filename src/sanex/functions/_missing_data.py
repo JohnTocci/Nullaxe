@@ -1,11 +1,11 @@
 import pandas as pd
 import polars as pl
-from typing import Union, Literal, Optional, List
+from typing import Union, Optional, List
 
 DataFrameType = Union[pd.DataFrame, pl.DataFrame]
 
 def drop_missing(df: DataFrameType, axis: str = 'rows',
-                how: Literal['any', 'all'] = 'any',
+                how: str = 'any',
                 thresh: Optional[int] = None,
                 subset: Optional[List[str]] = None) -> DataFrameType:
     """
@@ -24,6 +24,10 @@ def drop_missing(df: DataFrameType, axis: str = 'rows',
     # Validate the axis input
     if axis not in ['rows', 'columns']:
         raise ValueError("Axis must be either 'rows' or 'columns'.")
+
+    # Validate the how input
+    if how not in ['any', 'all']:
+        raise ValueError("how must be either 'any' or 'all'.")
 
     if isinstance(df, pd.DataFrame):
         # Map 'rows' to 0 and 'columns' to 1 for pandas
@@ -92,4 +96,3 @@ def fill_missing(df: DataFrameType, value: Union[int, float, str] = 0, subset: O
 
     else:
         raise TypeError("Input must be a pandas or polars DataFrame.")
-
