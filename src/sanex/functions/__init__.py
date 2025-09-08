@@ -7,6 +7,7 @@ from ._enforce_data_types import enforce_data_types
 from ._missing_data import fill_missing, drop_missing
 from ._whitespace import remove_whitespace
 from ._replace_text import replace_text
+from ._drop_single_value_columns import drop_single_value_columns
 
 __all__ = [
     "clean_column_names",
@@ -22,5 +23,6 @@ __all__ = [
     "fill_missing",
     "drop_missing",
     "remove_whitespace",
-    "replace_text"
+    "replace_text",
+    "drop_single_value_columns"
 ]

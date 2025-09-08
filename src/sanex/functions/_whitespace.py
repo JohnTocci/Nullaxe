@@ -16,7 +16,7 @@ def remove_whitespace(df: DataFrameType) -> DataFrameType:
     """
     if isinstance(df, pd.DataFrame):
         str_cols = df.select_dtypes(include=['object', 'string']).columns
-        df[str_cols] = df[str_cols].applymap(lambda x: x.strip() if isinstance(x, str) else x)
+        df[str_cols] = df[str_cols].apply(lambda x: x.str.strip())
         return df
 
     elif isinstance(df, pl.DataFrame):

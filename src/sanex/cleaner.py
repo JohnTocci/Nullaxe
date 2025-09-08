@@ -3,7 +3,7 @@ snakecase, camelcase, pascalcase,
 kebabcase, titlecase, lowercase,
 screaming_snakecase, clean_column_names,
 remove_duplicates, fill_missing, drop_missing,
-remove_whitespace, replace_text,)
+remove_whitespace, replace_text, drop_single_value_columns)
 import pandas as pd
 import polars as pl
 from typing import Union
@@ -142,6 +142,47 @@ class Sanex:
         This is a chainable method.
         """
         self._df = drop_missing(self._df, how=how, thresh=thresh, subset=subset, axis=axis)
+        return self
+
+    def remove_whitespace(self):
+        """
+        Removes leading and trailing whitespace from string entries in the DataFrame.
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_whitespace(self._df)
+        return self
+
+    def replace_text(self, to_replace: str, value: str, subset: list = None):
+        """
+        Replaces occurrences of a specified substring with another substring in the DataFrame.
+
+        Parameters:
+        to_replace (str): The substring to be replaced.
+        value (str): The substring to replace with.
+        subset (list): List of column names to consider for replacement. Default is None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = replace_text(self._df, to_replace=to_replace, value=value, subset=subset)
+        return self
+
+    def drop_single_value_columns(self):
+        """
+        Drops columns that contain only a single unique value from the DataFrame.
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = drop_single_value_columns(self._df)
         return self
 
     def to_df(self) -> DataFrameType:
