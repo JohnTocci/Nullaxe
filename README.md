@@ -1,8 +1,4 @@
-# Sanex
-
-<div align="center">
-  <img src="https://raw.githubusercontent.com/your-username/sanex/main/docs/logo.png" alt="Sanex Logo" width="200"/>
-</div>
+<h1 align="center">🧹 Sanex</h1>
 
 <div align="center">
 
@@ -44,7 +40,7 @@ Here's a quick example of how to use Sanex to clean a DataFrame:
 
 ```python
 import pandas as pd
-from sanex import Sanex
+import sanex as sx
 
 # Create a sample DataFrame
 data = {
@@ -58,7 +54,7 @@ df = pd.DataFrame(data)
 
 # Clean the data with Sanex
 clean_df = (
-    Sanex(df)
+    sx(df)
     .clean_column_names()
     .remove_whitespace()
     .remove_duplicates()
@@ -73,11 +69,11 @@ print(clean_df)
 
 ## 📖 API Reference
 
-The `Sanex` class provides a variety of methods for data cleaning. All methods (except `to_df`) are chainable, returning the `Sanex` instance.
+The `sanex` library provides a fluent, chainable API for cleaning DataFrames.
 
 ### Initialization
 
-- `Sanex(df)`: Initializes the cleaner with a pandas or polars DataFrame.
+- `sx(df)`: Initializes the cleaner with a pandas or polars DataFrame, allowing you to chain cleaning methods.
 
 ### Column Name Cleaning
 
