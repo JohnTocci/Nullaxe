@@ -25,16 +25,17 @@ def extract_and_clean_numeric(df: DataFrameType, subset: Optional[List[str]] = N
 
         for col in str_cols:
             new_col = f"{col}_numeric"
-            # Extract numeric values using regex - handles currency symbols, commas, etc.
-            numeric_pattern = r'[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?'
-            extracted = df[col].astype(str).str.extract(f'({numeric_pattern})', expand=False)
-
-            # Clean and convert to numeric
-            cleaned = extracted.str.replace(',', '').str.replace('$', '').str.replace('€', '').str.replace('£', '')
+            # First clean the text by removing currency symbols and commas
+            cleaned_text = df[col].astype(str).str.replace('[$€£¥]', '', regex=True).str.replace(',', '')
             # Handle 'k' suffix for thousands
-            cleaned = cleaned.str.replace('k', '000', case=False)
+            cleaned_text = cleaned_text.str.replace('k', '000', case=False)
 
-            df[new_col] = pd.to_numeric(cleaned, errors='coerce')
+            # Extract numeric values using regex - handles decimals and negatives
+            numeric_pattern = r'[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?'
+            extracted = cleaned_text.str.extract(f'({numeric_pattern})', expand=False)
+
+            # Convert to numeric
+            df[new_col] = pd.to_numeric(extracted, errors='coerce')
 
         return df
 

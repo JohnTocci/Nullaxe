@@ -46,9 +46,9 @@ def extract_phone_numbers(df: DataFrameType, subset: List[str] = None) -> DataFr
         for col in str_cols:
             new_col = f"{col}_phone"
             # Use regex pattern string for polars, not the compiled pattern
-            df = df.with_column(
+            df = df.with_columns(
                 pl.col(col)
-                .str.extract(PHONE_REGEX.pattern)
+                .str.extract(PHONE_REGEX.pattern, 1)  # Extract first capture group
                 .alias(new_col)
             )
         return df

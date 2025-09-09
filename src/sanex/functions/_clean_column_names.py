@@ -7,9 +7,6 @@ DataFrameType = Union[pd.DataFrame, pl.DataFrame]
 
 def _convert_to_snake_case(name: str) -> str:
     """Convert a string to snake_case."""
-    # Remove leading digits and non-alphabetic characters
-    name = re.sub(r'^[\d\W]+', '', name)
-
     # Handle CamelCase and PascalCase by inserting underscores before capital letters
     name = re.sub(r'(?<!^)(?=[A-Z][a-z])', '_', name)
 
@@ -27,13 +24,10 @@ def _convert_to_snake_case(name: str) -> str:
 
 def _convert_to_camel_case(name: str) -> str:
     """Convert a string to camelCase."""
-    # Remove leading digits and non-alphabetic characters
-    name = re.sub(r'^[\d\W]+', '', name)
-
     # Split on underscores, hyphens, and spaces
     words = re.split(r'[-_\s]+', name.lower())
     # Filter out empty strings and clean each word
-    words = [re.sub(r'[^\w]', '', word) for word in words if word and word.isalpha()]
+    words = [re.sub(r'[^\w]', '', word) for word in words if word]
     if not words:
         return name
     # First word lowercase, rest title case
@@ -41,13 +35,10 @@ def _convert_to_camel_case(name: str) -> str:
 
 def _convert_to_pascal_case(name: str) -> str:
     """Convert a string to PascalCase."""
-    # Remove leading digits and non-alphabetic characters
-    name = re.sub(r'^[\d\W]+', '', name)
-
     # Split on underscores, hyphens, and spaces
     words = re.split(r'[-_\s]+', name.lower())
     # Filter out empty strings and clean each word
-    words = [re.sub(r'[^\w]', '', word) for word in words if word and word.isalpha()]
+    words = [re.sub(r'[^\w]', '', word) for word in words if word]
     if not words:
         return name
     # All words title case

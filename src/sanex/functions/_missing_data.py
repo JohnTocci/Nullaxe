@@ -94,7 +94,7 @@ def fill_missing(df: DataFrameType, value: Union[int, float, str] = 0, subset: O
             df_copy = df.clone()
             for col in subset:
                 if col in df_copy.columns:
-                    df_copy = df_copy.with_column(
+                    df_copy = df_copy.with_columns(
                         pl.when(pl.col(col).is_null()).then(value).otherwise(pl.col(col)).alias(col)
                     )
             return df_copy
