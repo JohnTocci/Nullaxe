@@ -18,3 +18,4 @@ class _SanexModule:
         return globals()[name]
 
 sys.modules[__name__] = _SanexModule()
+

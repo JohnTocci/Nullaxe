@@ -343,7 +343,7 @@ df = (sx.Sanex(df)
 ```python
 # Performance-optimized pipeline
 result = (
-    sx.Sanex(large_df)
+    sx(large_df)
     .remove_duplicates()                        # Early deduplication saves memory
     .drop_single_value_columns()                # Remove unnecessary columns first
     .fill_missing(value=0, subset=['numeric_cols'])  # Target specific columns
