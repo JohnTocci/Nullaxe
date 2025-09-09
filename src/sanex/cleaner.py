@@ -7,7 +7,7 @@ from .functions import (
     handle_outliers, cap_outliers, remove_outliers,
     standardize_booleans, remove_unwanted_rows_and_cols,
     extract_and_clean_numeric, clean_numeric, extract_email,
-    extract_with_regex)
+    extract_with_regex, extract_phone_numbers)
 import pandas as pd
 import polars as pl
 from typing import Union, List, Optional
@@ -355,6 +355,27 @@ class Sanex:
         pattern = input("Enter the regex pattern to extract: ")
         self._df = extract_with_regex(self._df, pattern=pattern, subset=subset)
         return self
+
+    def extract_phone_numbers(self, subset: Optional[List[str]] = None):
+        """
+        Extracts phone numbers from string entries in the DataFrame and places them in new columns.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for phone number extraction.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        if subset is None:
+            # Handle different DataFrame types correctly
+            if isinstance(self._df, pd.DataFrame):
+                subset = list(self._df.columns)  # Use list constructor instead of tolist()
+            else:  # polars DataFrame
+                subset = self._df.columns  # Already a list in polars
+        self._df = extract_phone_numbers(self._df, subset=subset)
 
     def to_df(self) -> DataFrameType:
         """
