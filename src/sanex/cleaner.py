@@ -6,7 +6,8 @@ from .functions import (
     remove_whitespace, replace_text, drop_single_value_columns,
     handle_outliers, cap_outliers, remove_outliers,
     standardize_booleans, remove_unwanted_rows_and_cols,
-    extract_and_clean_numeric)
+    extract_and_clean_numeric, clean_numeric, extract_email,
+    extract_with_regex)
 import pandas as pd
 import polars as pl
 from typing import Union, List, Optional
@@ -292,6 +293,67 @@ class Sanex:
         This is a chainable method.
         """
         self._df = extract_and_clean_numeric(self._df, subset=subset)
+        return self
+
+    def clean_numeric(self, method: str = 'iqr', factor: float = 1.5, subset: list = None):
+        """
+        Cleans numeric columns in the DataFrame by extracting numeric values from strings
+        and handling outliers.
+
+        Parameters:
+        method (str): The method to use for handling outliers. Default is 'iqr'.
+                      Supported methods include 'iqr' (Interquartile Range) and 'zscore' (Z-Score).
+        factor (float): The factor to use for determining outlier thresholds. Default is 1.5.
+                        For 'iqr', this is the multiplier for the IQR. For 'zscore', this is the Z-Score threshold.
+        subset (list): List of column names to consider for cleaning. Default is None (all numeric columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = clean_numeric(self._df, subset=subset)
+        self._df = handle_outliers(self._df, method=method, factor=factor, subset=subset)
+        return self
+
+    def extract_email(self, subset: Optional[List[str]] = None):
+        """
+        Extracts email addresses from string entries in the DataFrame and places them in new columns.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for email extraction.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = extract_email(self._df, subset=subset)
+        return self
+
+    def extract_with_regex(self, subset: Optional[List[str]] = None):
+        """
+        Extracts substrings matching a given regex pattern from specified columns in the DataFrame
+        and places them in new columns.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for extraction.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        if subset is None:
+            # Handle different DataFrame types correctly
+            if isinstance(self._df, pd.DataFrame):
+                subset = list(self._df.columns)  # Use list constructor instead of tolist()
+            else:  # polars DataFrame
+                subset = self._df.columns  # Already a list in polars
+        pattern = input("Enter the regex pattern to extract: ")
+        self._df = extract_with_regex(self._df, pattern=pattern, subset=subset)
         return self
 
     def to_df(self) -> DataFrameType:

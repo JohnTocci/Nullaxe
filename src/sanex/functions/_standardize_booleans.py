@@ -1,6 +1,6 @@
 import pandas as pd
 import polars as pl
-from typing import Union, Dict, Any, Optional, List
+from typing import Union, Dict, Optional, List
 
 # Define constants for recognized boolean and missing values
 DataFrameType = Union[pd.DataFrame, pl.DataFrame]
