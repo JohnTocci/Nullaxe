@@ -64,7 +64,7 @@ df = pd.DataFrame(data)
 
 # Clean the entire dataset with a single chain
 clean_df = (
-    sx.Sanex(df)
+    sx(df)
     .clean_column_names()                    # Standardize column names
     .fill_missing(value='Unknown')           # Fill missing values
     .remove_whitespace()                     # Clean whitespace
