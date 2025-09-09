@@ -92,14 +92,22 @@ def fill_missing(df: DataFrameType, value: Union[int, float, str] = 0, subset: O
     DataFrameType: DataFrame with missing values filled.
     """
     if isinstance(df, pd.DataFrame):
+        df_copy = df.copy()
+
         if subset is None:
-            return df.fillna(value=value)
+            # Fill all columns
+            columns_to_fill = df_copy.columns
         else:
-            df_copy = df.copy()
-            for col in subset:
-                if col in df_copy.columns:
-                    df_copy[col] = df_copy[col].fillna(value)
-            return df_copy
+            columns_to_fill = [col for col in subset if col in df_copy.columns]
+
+        for col in columns_to_fill:
+            if df_copy[col].isna().any():
+                # If we're filling with a string but column is numeric, convert to object type first
+                if isinstance(value, str) and pd.api.types.is_numeric_dtype(df_copy[col]):
+                    df_copy[col] = df_copy[col].astype('object')
+                df_copy[col] = df_copy[col].fillna(value)
+
+        return df_copy
 
     elif isinstance(df, pl.DataFrame):
         if subset is None:

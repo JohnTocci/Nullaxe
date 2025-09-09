@@ -97,14 +97,14 @@ class TestMissingDataFunctions:
     def test_drop_missing_pandas_rows_all(self):
         """Test drop_missing with pandas DataFrame, dropping rows with all missing."""
         df = pd.DataFrame({
-            'A': [1, None, None, 4],
-            'B': [1, None, None, 4],
-            'C': [1, 2, 3, 4]
+            'A': [1, None, None, 4, None],
+            'B': [1, None, None, 4, None],
+            'C': [1, 2, 3, 4, None]  # Row 4 (index 4) has all NaN values
         })
 
         result = drop_missing(df, axis='rows', how='all')
 
-        assert result.shape[0] == 3  # Only row with all NaN dropped
+        assert result.shape[0] == 4  # Only row with all NaN dropped (from 5 to 4 rows)
 
     def test_drop_missing_pandas_columns_any(self):
         """Test drop_missing with pandas DataFrame, dropping columns with any missing."""

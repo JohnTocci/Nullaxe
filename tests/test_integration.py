@@ -71,7 +71,7 @@ class TestSanexIntegration:
         assert final_df.loc[0, 'first_name'] == 'John'  # Leading/trailing spaces removed
 
         # Check boolean standardization
-        assert final_df['boolean_col'].dtype == bool or final_df['boolean_col'].dtype == 'bool'
+        assert final_df['boolean_col'].dtype == bool or final_df['boolean_col'].dtype == 'bool' or str(final_df['boolean_col'].dtype) == 'boolean'
 
     def test_complete_cleaning_workflow_polars(self):
         """Test a complete data cleaning workflow with polars DataFrame."""

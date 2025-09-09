@@ -46,6 +46,8 @@ def cap_outliers(df: DataFrameType, method: str = 'iqr', threshold: float = 1.5,
                 std = result_df[col].std()
                 lower_bound = mean - threshold * std
                 upper_bound = mean + threshold * std
+            else:
+                raise ValueError("Method must be 'iqr' or 'zscore'")
 
             result_df[col] = result_df[col].clip(lower_bound, upper_bound)
 
@@ -69,6 +71,8 @@ def cap_outliers(df: DataFrameType, method: str = 'iqr', threshold: float = 1.5,
                 std = df[col].std()
                 lower_bound = mean - threshold * std
                 upper_bound = mean + threshold * std
+            else:
+                raise ValueError("Method must be 'iqr' or 'zscore'")
 
             result_df = result_df.with_columns(
                 pl.col(col).clip(lower_bound, upper_bound)
@@ -103,7 +107,7 @@ def remove_outliers(df: DataFrameType, method: str = 'iqr', threshold: float = 1
                 col_mask = (result_df[col] >= lower_bound) & (result_df[col] <= upper_bound)
             elif method == 'zscore':
                 mean = result_df[col].mean()
-                std = result_df[col].std()
+                std = result_df[col].std(ddof=1)  # Use sample standard deviation
                 if std == 0:  # Handle case where std is 0
                     continue
                 # Calculate z-scores for the column
@@ -113,6 +117,7 @@ def remove_outliers(df: DataFrameType, method: str = 'iqr', threshold: float = 1
             else:
                 raise ValueError("Method must be 'iqr' or 'zscore'")
 
+            # Update the overall mask to keep only rows that are not outliers in any column
             mask = mask & col_mask
 
         return result_df[mask]

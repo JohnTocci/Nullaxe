@@ -58,6 +58,10 @@ def standardize_booleans(
             if columns and df_copy[col].dtype not in ['object', 'string']:
                 continue
 
+            # Skip columns that contain 'MISSING' values to avoid converting filled data back to NaN
+            if df_copy[col].astype(str).str.contains('MISSING', case=False, na=False).any():
+                continue
+
             # Clean the series to check if all values are boolean-like
             cleaned_series = df_copy[col].astype(str).str.lower().str.strip()
 

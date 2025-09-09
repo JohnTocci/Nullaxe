@@ -15,9 +15,14 @@ def remove_whitespace(df: DataFrameType) -> DataFrameType:
     DataFrameType: DataFrame with whitespace removed from string entries.
     """
     if isinstance(df, pd.DataFrame):
-        str_cols = df.select_dtypes(include=['object', 'string']).columns
-        df[str_cols] = df[str_cols].apply(lambda x: x.str.strip())
-        return df
+        df_copy = df.copy()
+        str_cols = df_copy.select_dtypes(include=['object', 'string']).columns
+
+        for col in str_cols:
+            # Only apply strip to actual string values, preserve other types including 'MISSING'
+            df_copy[col] = df_copy[col].apply(lambda x: x.strip() if isinstance(x, str) else x)
+
+        return df_copy
 
     elif isinstance(df, pl.DataFrame):
         for col in df.columns:

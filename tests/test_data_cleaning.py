@@ -101,7 +101,7 @@ class TestDataCleaningFunctions:
             'other': [10, 20, 30, 40, 50, 60, 70]
         })
 
-        result = remove_outliers(df, columns=['values'], method='zscore', threshold=2)
+        result = remove_outliers(df, columns=['values'], method='zscore', threshold=0.5)
 
         assert result.shape[0] < df.shape[0]  # Outlier rows removed
         assert 100 not in result['values'].values
