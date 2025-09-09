@@ -41,7 +41,23 @@ def drop_missing(df: DataFrameType, axis: str = 'rows',
 
     elif isinstance(df, pl.DataFrame):
         if axis == 'rows':
-            return df.drop_nulls(subset=subset)
+            if how == 'any':
+                return df.drop_nulls(subset=subset)
+            elif how == 'all':
+                # For 'all', only drop rows where ALL values in the row (or subset) are null
+                if subset is None:
+                    # Check all columns - only drop if all values in row are null
+                    mask = df.select([
+                        pl.fold(acc=pl.lit(False), function=lambda acc, x: acc | x.is_not_null(), exprs=pl.all()).alias("has_non_null")
+                    ])["has_non_null"]
+                    return df.filter(mask)
+                else:
+                    # Check only subset columns - only drop if all values in subset are null
+                    mask = df.select([
+                        pl.fold(acc=pl.lit(False), function=lambda acc, x: acc | x.is_not_null(),
+                               exprs=[pl.col(col) for col in subset if col in df.columns]).alias("has_non_null")
+                    ])["has_non_null"]
+                    return df.filter(mask)
         elif axis == 'columns':
             # Polars does not have a direct method to drop columns with nulls based on a condition like pandas.
             # We need to identify columns with any nulls and then drop them.
@@ -49,8 +65,6 @@ def drop_missing(df: DataFrameType, axis: str = 'rows',
                 cols_to_drop = [col for col in df.columns if df[col].is_null().any()]
             elif how == 'all':
                 cols_to_drop = [col for col in df.columns if df[col].is_null().all()]
-            else:
-                raise ValueError("For polars, 'how' must be 'any' or 'all' when dropping columns.")
 
             # The 'thresh' and 'subset' parameters are not directly applicable to dropping columns in Polars in the same way as pandas.
             # You would typically select the columns you want to keep instead.
@@ -89,14 +103,30 @@ def fill_missing(df: DataFrameType, value: Union[int, float, str] = 0, subset: O
 
     elif isinstance(df, pl.DataFrame):
         if subset is None:
-            return df.fill_null(value)
+            # Handle different data types properly
+            df_result = df.clone()
+            for col in df.columns:
+                if df[col].dtype == pl.String:
+                    df_result = df_result.with_columns(
+                        pl.col(col).fill_null(str(value))
+                    )
+                else:
+                    df_result = df_result.with_columns(
+                        pl.col(col).fill_null(value)
+                    )
+            return df_result
         else:
             df_copy = df.clone()
             for col in subset:
                 if col in df_copy.columns:
-                    df_copy = df_copy.with_columns(
-                        pl.when(pl.col(col).is_null()).then(value).otherwise(pl.col(col)).alias(col)
-                    )
+                    if df_copy[col].dtype == pl.String:
+                        df_copy = df_copy.with_columns(
+                            pl.col(col).fill_null(str(value))
+                        )
+                    else:
+                        df_copy = df_copy.with_columns(
+                            pl.col(col).fill_null(value)
+                        )
             return df_copy
 
     else:
