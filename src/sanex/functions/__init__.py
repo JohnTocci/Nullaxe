@@ -16,6 +16,7 @@ from ._extract_and_clean_numeric import extract_and_clean_numeric, clean_numeric
 from ._extract_email import extract_email
 from ._extract_with_regex import extract_with_regex
 from ._extract_phone_numbers import extract_phone_numbers
+from ._remove_punctuation import remove_punctuation
 
 __all__ = [
     "clean_column_names",
@@ -44,4 +45,5 @@ __all__ = [
     "extract_email",
     "extract_with_regex",
     "extract_phone_numbers",
+    "remove_punctuation",
 ]

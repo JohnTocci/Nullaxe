@@ -7,50 +7,80 @@ DataFrameType = Union[pd.DataFrame, pl.DataFrame]
 
 def _convert_to_snake_case(name: str) -> str:
     """Convert a string to snake_case."""
-    name = re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()  # CamelCase to snake_case
-    name = re.sub(r'\s+', '_', name)  # Spaces to underscores
-    name = re.sub(r'\W', '', name)  # Remove non-alphanumeric characters
-    name = re.sub(r'__+', '_', name)  # Replace multiple underscores with single underscore
-    return name.strip('_')  # Remove leading/trailing underscores
+    # Remove leading digits and non-alphabetic characters
+    name = re.sub(r'^[\d\W]+', '', name)
+
+    # Handle CamelCase and PascalCase by inserting underscores before capital letters
+    name = re.sub(r'(?<!^)(?=[A-Z][a-z])', '_', name)
+
+    # Handle spaces and hyphens
+    name = re.sub(r'[-\s]+', '_', name)
+
+    # Remove non-alphanumeric characters except underscores
+    name = re.sub(r'[^\w]', '_', name)
+
+    # Clean up multiple underscores
+    name = re.sub(r'_+', '_', name)
+
+    # Convert to lowercase and remove leading/trailing underscores
+    return name.lower().strip('_')
 
 def _convert_to_camel_case(name: str) -> str:
     """Convert a string to camelCase."""
-    name = re.sub(r'[_\s]+', ' ', name).title().replace(' ', '')  # snake_case or spaces to CamelCase
-    return name[0].lower() + name[1:] if name else name  # Lowercase first letter
+    # Remove leading digits and non-alphabetic characters
+    name = re.sub(r'^[\d\W]+', '', name)
+
+    # Split on underscores, hyphens, and spaces
+    words = re.split(r'[-_\s]+', name.lower())
+    # Filter out empty strings and clean each word
+    words = [re.sub(r'[^\w]', '', word) for word in words if word and word.isalpha()]
+    if not words:
+        return name
+    # First word lowercase, rest title case
+    return words[0].lower() + ''.join(word.capitalize() for word in words[1:])
 
 def _convert_to_pascal_case(name: str) -> str:
     """Convert a string to PascalCase."""
-    name = re.sub(r'[_\s]+', ' ', name).title().replace(' ', '')  # snake_case or spaces to PascalCase
-    return name  # First letter is already uppercase
+    # Remove leading digits and non-alphabetic characters
+    name = re.sub(r'^[\d\W]+', '', name)
+
+    # Split on underscores, hyphens, and spaces
+    words = re.split(r'[-_\s]+', name.lower())
+    # Filter out empty strings and clean each word
+    words = [re.sub(r'[^\w]', '', word) for word in words if word and word.isalpha()]
+    if not words:
+        return name
+    # All words title case
+    return ''.join(word.capitalize() for word in words)
 
 def _convert_to_kebab_case(name: str) -> str:
     """Convert a string to kebab-case."""
-    name = re.sub(r'(?<!^)(?=[A-Z])', '-', name).lower()  # CamelCase to kebab-case
-    name = re.sub(r'\s+', '-', name)  # Spaces to hyphens
-    name = re.sub(r'[^\w-]', '', name)  # Remove non-alphanumeric characters except hyphen
-    name = re.sub(r'--+', '-', name)  # Replace multiple hyphens with single hyphen
-    return name.strip('-')  # Remove leading/trailing hyphens
+    # If it's already snake_case or SCREAMING_SNAKE_CASE, convert underscores to hyphens
+    if '_' in name and not re.search(r'[A-Z][a-z]', name):
+        return name.lower().replace('_', '-')
+
+    # Handle CamelCase and PascalCase
+    name = re.sub(r'(?<!^)(?=[A-Z][a-z])', '-', name)
+    # Handle spaces
+    name = re.sub(r'\s+', '-', name)
+    # Remove non-alphanumeric characters except hyphens
+    name = re.sub(r'[^\w-]', '-', name)
+    # Clean up multiple hyphens and convert to lowercase
+    name = re.sub(r'-+', '-', name).lower()
+    # Remove leading/trailing hyphens
+    return name.strip('-')
 
 def _convert_to_title_case(name: str) -> str:
     """Convert a string to Title Case."""
-    name = re.sub(r'[_\s]+', ' ', name).title()  # snake_case or spaces to Title Case
-    return name.strip()  # Remove leading/trailing spaces
-
-def _convert_to_upper_case(name: str) -> str:
-    """Convert a string to UPPER_CASE."""
-    name = re.sub(r'(?<!^)(?=[A-Z])', '_', name).upper()  # CamelCase to UPPER_CASE
-    name = re.sub(r'\s+', '_', name)  # Spaces to underscores
-    name = re.sub(r'\W', '', name)  # Remove non-alphanumeric characters
-    name = re.sub(r'__+', '_', name)  # Replace multiple underscores with single underscore
-    return name.strip('_')  # Remove leading/trailing underscores
+    # Split on underscores, hyphens
+    words = re.split(r'[-_]+', name)
+    # Clean and capitalize each word
+    words = [re.sub(r'[^\w]', '', word).capitalize() for word in words if word]
+    return ' '.join(words)
 
 def _convert_to_lower_case(name: str) -> str:
-    """Convert a string to LOWER_CASE."""
-    name = re.sub(r'(?<!^)(?=[A-Z])', '_', name).lower()  # CamelCase to lower_case
-    name = re.sub(r'\s+', '_', name)  # Spaces to underscores
-    name = re.sub(r'\W', '', name)  # Remove non-alphanumeric characters
-    name = re.sub(r'__+', '_', name)  # Replace multiple underscores with single underscore
-    return name.strip('_')  # Remove leading/trailing underscores
+    """Convert a string to lowercase."""
+    return name.lower()
 
 def _screaming_snake_case(name: str) -> str:
     """Convert a string to SCREAMING_SNAKE_CASE."""
@@ -59,13 +89,6 @@ def _screaming_snake_case(name: str) -> str:
 def _apply_column_case(df: DataFrameType, case_func) -> DataFrameType:
     """
     Apply a case conversion function to all column names in the DataFrame.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame (pandas or polars).
-    case_func (Callable[[str], str]): Function that converts a single column name.
-
-    Returns:
-    DataFrameType: DataFrame with converted column names.
     """
     if isinstance(df, pd.DataFrame):
         df.columns = [case_func(col) for col in df.columns]
@@ -73,119 +96,39 @@ def _apply_column_case(df: DataFrameType, case_func) -> DataFrameType:
         df.columns = [case_func(col) for col in df.columns]
     else:
         raise TypeError("Input must be a pandas or polars DataFrame.")
-
     return df
 
 def snakecase(df: DataFrameType) -> DataFrameType:
-    """
-    Convert all column names in the DataFrame to snake_case.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-
-    Returns:
-    DataFrameType: DataFrame with column names in snake_case.
-    """
+    """Convert all column names in the DataFrame to snake_case."""
     return _apply_column_case(df, _convert_to_snake_case)
 
 def camelcase(df: DataFrameType) -> DataFrameType:
-    """
-    Convert all column names in the DataFrame to camelCase.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-
-    Returns:
-    DataFrameType: DataFrame with column names in camelCase.
-    """
+    """Convert all column names in the DataFrame to camelCase."""
     return _apply_column_case(df, _convert_to_camel_case)
 
 def pascalcase(df: DataFrameType) -> DataFrameType:
-    """
-    Convert all column names in the DataFrame to PascalCase.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-
-    Returns:
-    DataFrameType: DataFrame with column names in PascalCase.
-    """
+    """Convert all column names in the DataFrame to PascalCase."""
     return _apply_column_case(df, _convert_to_pascal_case)
 
 def kebabcase(df: DataFrameType) -> DataFrameType:
-    """
-    Convert all column names in the DataFrame to kebab-case.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-
-    Returns:
-    DataFrameType: DataFrame with column names in kebab-case.
-    """
+    """Convert all column names in the DataFrame to kebab-case."""
     return _apply_column_case(df, _convert_to_kebab_case)
 
 def titlecase(df: DataFrameType) -> DataFrameType:
-    """
-    Convert all column names in the DataFrame to Title Case.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-
-    Returns:
-    DataFrameType: DataFrame with column names in Title Case.
-    """
+    """Convert all column names in the DataFrame to Title Case."""
     return _apply_column_case(df, _convert_to_title_case)
 
-def uppercase(df: DataFrameType) -> DataFrameType:
-    """
-    Convert all column names in the DataFrame to UPPER_CASE.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-
-    Returns:
-    DataFrameType: DataFrame with column names in UPPER_CASE.
-    """
-    return _apply_column_case(df, _convert_to_upper_case)
-
 def lowercase(df: DataFrameType) -> DataFrameType:
-    """
-    Convert all column names in the DataFrame to LOWER_CASE.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-
-    Returns:
-    DataFrameType: DataFrame with column names in LOWER_CASE.
-    """
+    """Convert all column names in the DataFrame to lowercase."""
     return _apply_column_case(df, _convert_to_lower_case)
 
 def screaming_snakecase(df: DataFrameType) -> DataFrameType:
-    """
-    Convert all column names in the DataFrame to SCREAMING_SNAKE_CASE.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-
-    Returns:
-    DataFrameType: DataFrame with column names in SCREAMING_SNAKE_CASE.
-    """
+    """Convert all column names in the DataFrame to SCREAMING_SNAKE_CASE."""
     return _apply_column_case(df, _screaming_snake_case)
 
 def clean_column_names(df: DataFrameType, case: str = 'snake') -> DataFrameType:
     """
     Clean and standardize column names in the DataFrame to the specified case format.
-
-    Parameters:
-    df (DataFrameType): Input DataFrame.
-    case (str): Desired case format. Supported options include both short and stylistic forms:
-                'snake', 'snake_case', 'camel', 'camelCase', 'pascal', 'PascalCase',
-                'kebab', 'kebab-case', 'title', 'Title Case', 'upper', 'UPPER_CASE',
-                'lower', 'lower_case', 'screaming_snake', 'SCREAMING_SNAKE_CASE'.
-                Default is 'snake'.
-
-    Returns:
-    DataFrameType: DataFrame with cleaned column names.
     """
     case_functions = {
         'snake': snakecase,
@@ -198,15 +141,12 @@ def clean_column_names(df: DataFrameType, case: str = 'snake') -> DataFrameType:
         'kebab-case': kebabcase,
         'title': titlecase,
         'Title Case': titlecase,
-        'upper': uppercase,
-        'UPPER_CASE': uppercase,
         'lower': lowercase,
-        'lower_case': lowercase,
         'screaming_snake': screaming_snakecase,
         'SCREAMING_SNAKE_CASE': screaming_snakecase,
     }
 
     if case not in case_functions:
-        raise ValueError(f"Invalid case option '{case}'. Valid options are: {list(case_functions.keys())}")
+        raise ValueError(f"Unsupported case format: {case}")
 
     return case_functions[case](df)

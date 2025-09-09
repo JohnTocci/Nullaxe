@@ -4,8 +4,8 @@ import re
 from typing import Union, List
 
 DataFrameType = Union[pd.DataFrame, pl.DataFrame]
-PHONE_REGEX = re.compile(r'\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d')
-# This regex matches various phone number formats, including optional country codes and area codes.
+PHONE_REGEX = re.compile(r'(\+?(?:\d[\d\-. ]*)?(?:\([\d\-. ]*\))?[\d\-. ]*\d)')
+# This regex matches various phone number formats with single capture group
 
 # Helper function to reduce code duplication
 def _get_string_columns(df, subset=None):

@@ -24,7 +24,18 @@ def extract_and_clean_numeric(df: DataFrameType, subset: Optional[List[str]] = N
             str_cols = [col for col in subset if col in df.columns and df[col].dtype in ['object', 'string']]
 
         for col in str_cols:
-            df[col] = pd.to_numeric(df[col].str.extract(r'([-+]?\d*\.?\d+)', expand=False), errors='coerce')
+            new_col = f"{col}_numeric"
+            # Extract numeric values using regex - handles currency symbols, commas, etc.
+            numeric_pattern = r'[-+]?[0-9]*\.?[0-9]+(?:[eE][-+]?[0-9]+)?'
+            extracted = df[col].astype(str).str.extract(f'({numeric_pattern})', expand=False)
+
+            # Clean and convert to numeric
+            cleaned = extracted.str.replace(',', '').str.replace('$', '').str.replace('€', '').str.replace('£', '')
+            # Handle 'k' suffix for thousands
+            cleaned = cleaned.str.replace('k', '000', case=False)
+
+            df[new_col] = pd.to_numeric(cleaned, errors='coerce')
+
         return df
 
     elif isinstance(df, pl.DataFrame):
@@ -44,38 +55,45 @@ def extract_and_clean_numeric(df: DataFrameType, subset: Optional[List[str]] = N
 
     raise TypeError("Input must be a pandas or polars DataFrame.")
 
-def clean_numeric(df: DataFrameType, subset: Optional[List[str]] = None) -> DataFrameType:
+def clean_numeric(df: DataFrameType, columns: Optional[List[str]] = None) -> DataFrameType:
     """
-    Cleans numeric columns in the DataFrame by converting non-numeric entries to NaN.
+    Cleans and converts string columns to numeric values by removing currency symbols, commas, etc.
 
     Parameters:
     df (DataFrameType): Input DataFrame.
-    subset (List[str], optional): List of column names to consider for cleaning.
-        Defaults to None (all numeric columns).
+    columns (List[str], optional): List of column names to clean. Defaults to None (all string columns).
 
     Returns:
     DataFrameType: DataFrame with cleaned numeric columns.
     """
     if isinstance(df, pd.DataFrame):
-        if subset is None:
-            num_cols = df.select_dtypes(include=['number']).columns
+        if columns is None:
+            str_cols = df.select_dtypes(include=['object', 'string']).columns
         else:
-            num_cols = [col for col in subset if col in df.columns and pd.api.types.is_numeric_dtype(df[col])]
+            str_cols = [col for col in columns if col in df.columns]
 
-        for col in num_cols:
-            df[col] = pd.to_numeric(df[col], errors='coerce')
-        return df
+        df_copy = df.copy()
+        for col in str_cols:
+            # Clean numeric values by removing currency symbols and formatting
+            cleaned = df_copy[col].astype(str).str.replace(',', '').str.replace('$', '').str.replace('€', '').str.replace('£', '').str.replace('¥', '')
+            # Handle 'k' suffix for thousands
+            cleaned = cleaned.str.replace('k', '000', case=False)
+            df_copy[col] = pd.to_numeric(cleaned, errors='coerce')
+
+        return df_copy
 
     elif isinstance(df, pl.DataFrame):
-        if subset is None:
-            num_cols = [col for col in df.columns if df[col].dtype.is_numeric()]
+        if columns is None:
+            str_cols = [col for col in df.columns if df[col].dtype == pl.String]
         else:
-            num_cols = [col for col in subset if col in df.columns and df[col].dtype.is_numeric()]
+            str_cols = [col for col in columns if col in df.columns]
 
-        for col in num_cols:
-            df = df.with_column(
-                pl.col(col).cast(pl.Float64, strict=False).alias(col)
+        df_copy = df.clone()
+        for col in str_cols:
+            df_copy = df_copy.with_columns(
+                pl.col(col).str.replace_all(',', '').str.replace_all('[$€£¥]', '').str.replace_all('k', '000').cast(pl.Float64, strict=False).alias(col)
             )
-        return df
+
+        return df_copy
 
     raise TypeError("Input must be a pandas or polars DataFrame.")

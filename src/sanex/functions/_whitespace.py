@@ -22,7 +22,7 @@ def remove_whitespace(df: DataFrameType) -> DataFrameType:
     elif isinstance(df, pl.DataFrame):
         for col in df.columns:
             if df[col].dtype == pl.String:
-                df = df.with_column(pl.col(col).str.strip_chars().alias(col))
+                df = df.with_columns(pl.col(col).str.strip_chars().alias(col))
         return df
 
     raise TypeError("Input must be a pandas or polars DataFrame.")

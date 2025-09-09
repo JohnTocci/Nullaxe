@@ -3,7 +3,7 @@ import polars as pl
 from typing import Union, List, Optional
 
 DataFrameType = Union[pd.DataFrame, pl.DataFrame]
-EMAIL_REGEX = r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'
+EMAIL_REGEX = r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})'  # Added capture group
 
 def extract_email(df: DataFrameType, subset: Optional[List[str]] = None) -> DataFrameType:
     """
@@ -37,9 +37,9 @@ def extract_email(df: DataFrameType, subset: Optional[List[str]] = None) -> Data
 
         for col in columns_to_process:
             new_col = f"{col}_email"
-            df = df.with_column(
+            df = df.with_columns(
                 pl.col(col)
-                .str.extract(EMAIL_REGEX, 0)
+                .str.extract(EMAIL_REGEX, 1)  # Extract first capture group
                 .alias(new_col)
             )
         return df

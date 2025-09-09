@@ -7,7 +7,7 @@ from .functions import (
     handle_outliers, cap_outliers, remove_outliers,
     standardize_booleans, remove_unwanted_rows_and_cols,
     extract_and_clean_numeric, clean_numeric, extract_email,
-    extract_with_regex, extract_phone_numbers)
+    extract_with_regex, extract_phone_numbers, remove_punctuation)
 import pandas as pd
 import polars as pl
 from typing import Union, List, Optional
@@ -246,21 +246,21 @@ class Sanex:
         self._df = remove_outliers(self._df, method=method, factor=factor, subset=subset)
         return self
 
-    def standardize_booleans(self, true_values: list = None, false_values: list = None, subset: list = None):
+    def standardize_booleans(self, true_values: list = None, false_values: list = None, columns: list = None):
         """
         Standardizes boolean-like values in the DataFrame to actual boolean types.
 
         Parameters:
         true_values (list): List of values to be considered as True. Default is ['yes', 'y', 'true', 't', '1'].
         false_values (list): List of values to be considered as False. Default is ['no', 'n', 'false', 'f', '0'].
-        subset (list): List of column names to consider for boolean standardization. Default is None (all columns).
+        columns (list): List of column names to consider for boolean standardization. Default is None (all columns).
 
         Returns:
             Sanex: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
-        self._df = standardize_booleans(self._df, true_values=true_values, false_values=false_values, subset=subset)
+        self._df = standardize_booleans(self._df, true_values=true_values, false_values=false_values, columns=columns)
         return self
 
     def remove_unwanted_rows_and_cols(self, unwanted_values: Optional[List[Union[str, int, float]]] = None):
@@ -376,6 +376,23 @@ class Sanex:
             else:  # polars DataFrame
                 subset = self._df.columns  # Already a list in polars
         self._df = extract_phone_numbers(self._df, subset=subset)
+        return self  # Add missing return statement
+
+    def remove_punctuation(self, subset: Optional[List[str]] = None):
+        """
+        Removes punctuation from string entries in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for punctuation removal.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_punctuation(self._df, subset=subset)
+        return self
 
     def to_df(self) -> DataFrameType:
         """

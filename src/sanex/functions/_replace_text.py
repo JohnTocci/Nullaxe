@@ -5,55 +5,68 @@ from typing import Union, Optional, List
 
 DataFrameType = Union[pd.DataFrame, pl.DataFrame]
 
-def replace_text(df: DataFrameType, to_replace: str, value: str, subset: Optional[List[str]] = None, regex: bool = False) -> DataFrameType:
+def replace_text(df: DataFrameType, old: str = None, new: str = None, columns: Optional[List[str]] = None, regex: bool = False, to_replace: str = None, value: str = None, subset: Optional[List[str]] = None) -> DataFrameType:
     """
     Replaces occurrences of a specified substring with another substring in string columns of the DataFrame.
 
     Parameters:
     df (DataFrameType): Input DataFrame.
-    to_replace (str): The substring or pattern to be replaced.
-    value (str): The string to replace with.
-    subset (Optional[List[str]]): List of column names to consider for replacement. Default is None (all string columns).
-    regex (bool): Whether to treat 'to_replace' as a regular expression. Default is False.
+    old (str): The substring or pattern to be replaced (preferred parameter name).
+    new (str): The string to replace with (preferred parameter name).
+    columns (Optional[List[str]]): List of column names to consider for replacement. Default is None (all string columns).
+    regex (bool): Whether to treat 'old' as a regular expression. Default is False.
+    to_replace (str): Alternative parameter name for backward compatibility.
+    value (str): Alternative parameter name for backward compatibility.
+    subset (Optional[List[str]]): Alternative parameter name for backward compatibility.
 
     Returns:
     DataFrameType: DataFrame with text replaced in specified string columns.
     """
+    # Handle parameter compatibility
+    if old is None and to_replace is not None:
+        old = to_replace
+    if new is None and value is not None:
+        new = value
+    if columns is None and subset is not None:
+        columns = subset
+
+    if old is None or new is None:
+        raise ValueError("Both 'old' and 'new' parameters are required")
+
     if isinstance(df, pd.DataFrame):
         # Determine which columns to process
-        if subset:
-            # Filter subset to only include string columns that exist in the DataFrame
-            str_cols = [col for col in subset if col in df.columns]
+        if columns:
+            str_cols = [col for col in columns if col in df.columns and df[col].dtype in ['object', 'string']]
         else:
-            # Use all string columns
             str_cols = df.select_dtypes(include=['object', 'string']).columns
 
-        # Create a copy to avoid modifying the original DataFrame
         df_copy = df.copy()
-
-        # Replace text in the selected columns
         for col in str_cols:
-            if col in df_copy.columns and df_copy[col].dtype in ['object', 'string']:
-                df_copy[col] = df_copy[col].str.replace(to_replace, value, regex=regex)
+            if regex:
+                df_copy[col] = df_copy[col].str.replace(old, new, regex=True)
+            else:
+                df_copy[col] = df_copy[col].str.replace(old, new, regex=False)
 
         return df_copy
 
     elif isinstance(df, pl.DataFrame):
         # Determine which columns to process
-        if subset:
-            # Filter subset to only include columns that exist in the DataFrame
-            str_cols = [col for col in subset if col in df.columns]
+        if columns:
+            str_cols = [col for col in columns if col in df.columns and df[col].dtype == pl.String]
         else:
-            # Use all string columns
-            str_cols = [col for col in df.columns if df[col].dtype == pl.Utf8]
+            str_cols = [col for col in df.columns if df[col].dtype == pl.String]
 
-        # Replace text in the selected columns
-        for col_name in str_cols:
-            if col_name in df.columns and df[col_name].dtype == pl.Utf8:
-                df = df.with_columns(
-                    pl.col(col_name).str.replace_all(to_replace, value, literal=(not regex)).alias(col_name)
+        df_copy = df.clone()
+        for col in str_cols:
+            if regex:
+                df_copy = df_copy.with_columns(
+                    pl.col(col).str.replace_all(old, new).alias(col)
+                )
+            else:
+                df_copy = df_copy.with_columns(
+                    pl.col(col).str.replace_all(old, new, literal=True).alias(col)
                 )
 
-        return df
+        return df_copy
 
     raise TypeError("Input must be a pandas or polars DataFrame.")

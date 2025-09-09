@@ -13,7 +13,7 @@ def standardize_booleans(
     df: DataFrameType,
     true_values: List[str] = None,
     false_values: List[str] = None,
-    subset: List[str] = None
+    columns: List[str] = None
 ) -> DataFrameType:
     """
     Standardizes boolean-like columns in the DataFrame to actual boolean types.
@@ -25,7 +25,7 @@ def standardize_booleans(
                                        Default is ['yes', 'y', 'true', 't', '1', 'on'].
     false_values (List[str], optional): List of values to be considered as False.
                                         Default is ['no', 'n', 'false', 'f', '0', 'off'].
-    subset (List[str], optional): List of column names to consider for boolean standardization.
+    columns (List[str], optional): List of column names to consider for boolean standardization.
                                   Default is None (all columns).
 
     Returns:
@@ -47,7 +47,7 @@ def standardize_booleans(
         df_copy = df.copy()
 
         # Determine which columns to process
-        columns_to_process = subset if subset else df_copy.select_dtypes(include=['object', 'string']).columns
+        columns_to_process = columns if columns else df_copy.select_dtypes(include=['object', 'string']).columns
 
         # Iterate only over specified columns or object/string columns
         for col in columns_to_process:
@@ -55,7 +55,7 @@ def standardize_booleans(
                 continue
 
             # Skip non-string columns if they're in the subset
-            if subset and df_copy[col].dtype not in ['object', 'string']:
+            if columns and df_copy[col].dtype not in ['object', 'string']:
                 continue
 
             # Clean the series to check if all values are boolean-like
@@ -69,7 +69,7 @@ def standardize_booleans(
 
     elif isinstance(df, pl.DataFrame):
         # Determine which columns to process
-        columns_to_process = subset if subset else df.columns
+        columns_to_process = columns if columns else df.columns
 
         # Iterate through selected columns
         for col in columns_to_process:
@@ -87,7 +87,7 @@ def standardize_booleans(
 
                 # If all values are boolean-like, convert the column
                 if lower_col.is_in(list(all_values)).all():
-                    df = df.with_column(
+                    df = df.with_columns(
                         pl.when(lower_col.is_in(list(true_set))).then(True)
                         .when(lower_col.is_in(list(false_set))).then(False)
                         .otherwise(None).alias(col)

@@ -32,7 +32,12 @@ def drop_missing(df: DataFrameType, axis: str = 'rows',
     if isinstance(df, pd.DataFrame):
         # Map 'rows' to 0 and 'columns' to 1 for pandas
         pandas_axis = 0 if axis == 'rows' else 1
-        return df.dropna(axis=pandas_axis, how=how, thresh=thresh, subset=subset)
+
+        # Handle parameter conflicts - pandas doesn't allow both how and thresh
+        if thresh is not None:
+            return df.dropna(axis=pandas_axis, thresh=thresh, subset=subset)
+        else:
+            return df.dropna(axis=pandas_axis, how=how, subset=subset)
 
     elif isinstance(df, pl.DataFrame):
         if axis == 'rows':
