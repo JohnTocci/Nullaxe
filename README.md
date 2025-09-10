@@ -18,6 +18,7 @@
 - **🔗 Fluent, Chainable API**: Clean your data in a single, readable chain of commands
 - **⚡ Dual Backend Support**: Works effortlessly with both pandas and polars DataFrames
 - **🧹 Comprehensive Cleaning**: From basic cleaning to advanced data extraction and transformation
+- **🪄 Display Formatting Pipeline**: Format columns for presentation (currency, percentages, thousands separators, date formatting, truncation, title-cased headers)
 - **📊 Intelligent Outlier Detection**: Multiple methods including IQR and Z-score analysis
 - **🔍 Advanced Data Extraction**: Extract emails, phone numbers, and custom patterns with regex
 - **🎯 Smart Type Handling**: Automatic type inference and standardization
@@ -75,7 +76,14 @@ clean_df = (
     .extract_and_clean_numeric()             # Extract numeric values from strings
     .drop_single_value_columns()             # Remove columns with only one value
     .remove_outliers(method='iqr')           # Handle outliers
-    .to_df()                                 # Return the cleaned DataFrame
+    .format_for_display(                     # NEW: Format for presentation
+        rules={
+            'salary': {'type': 'currency', 'symbol': '$', 'decimals': 2},
+            'age': {'type': 'thousands'},
+        },
+        column_case='title'
+    )
+    .to_df()                                 # Return the cleaned, formatted DataFrame
 )
 
 print(clean_df.head())
@@ -228,6 +236,36 @@ Extract structured data from unstructured text:
 .clean_numeric(method='zscore', factor=2.0)      # Custom outlier parameters
 ```
 
+### 🪄 Display / Presentation Formatting (NEW in 0.3.0)
+
+Format cleaned data for reports, dashboards, exports:
+
+```python
+.format_for_display(
+    rules={
+        'price': {'type': 'currency', 'symbol': '$', 'decimals': 2},
+        'growth': {'type': 'percentage', 'decimals': 1},
+        'volume': {'type': 'thousands'},
+        'description': {'type': 'truncate', 'length': 30},
+        'event_date': {'type': 'datetime', 'format': '%B %d, %Y'}
+    },
+    column_case='title'  # or None to preserve original column names
+)
+```
+
+Supported rule types:
+- `currency`: symbol + thousands + decimal precision
+- `percentage`: multiplies by 100 + suffix `%`
+- `thousands`: adds thousands separators, removes trailing `.0` for whole floats
+- `truncate`: shortens long text and appends `...`
+- `datetime`: parses and formats date/time strings
+
+You can also call the function directly:
+```python
+from sanex.functions import format_for_display
+formatted = format_for_display(df, rules=..., column_case='title')
+```
+
 ### 📤 Output
 
 ```python
@@ -247,25 +285,27 @@ import sanex as sx
 # Load messy customer data
 df = pd.read_csv('messy_customer_data.csv')
 
-# Comprehensive cleaning pipeline
+# Comprehensive cleaning + formatting pipeline
 clean_customers = (
     sx(df)
-    .clean_column_names(case='snake')           # Standardize column names
-    .fill_missing(value='Not Provided')        # Handle missing data
-    .remove_whitespace()                        # Clean text
-    .standardize_booleans(                      # Standardize boolean columns
-        columns=['is_active', 'newsletter_opt_in']
+    .clean_column_names(case='snake')
+    .fill_missing(value='Not Provided')
+    .remove_whitespace()
+    .standardize_booleans(columns=['is_active', 'newsletter_opt_in'])
+    .extract_email(subset=['contact_info'])
+    .extract_phone_numbers(subset=['contact_info'])
+    .extract_and_clean_numeric(subset=['revenue', 'age'])
+    .remove_outliers(method='iqr', factor=2.0, subset=['revenue'])
+    .drop_single_value_columns()
+    .remove_duplicates()
+    .format_for_display(
+        rules={
+            'revenue': {'type': 'currency', 'symbol': '$', 'decimals': 2},
+            'age': {'type': 'thousands'},
+            'signup_date': {'type': 'datetime', 'format': '%Y-%m-%d'}
+        },
+        column_case='title'
     )
-    .extract_email(subset=['contact_info'])     # Extract emails
-    .extract_phone_numbers(subset=['contact_info'])  # Extract phone numbers
-    .extract_and_clean_numeric(subset=['revenue', 'age'])  # Clean numeric data
-    .remove_outliers(                           # Handle outliers in revenue
-        method='iqr', 
-        factor=2.0,
-        subset=['revenue']
-    )
-    .drop_single_value_columns()                # Remove useless columns
-    .remove_duplicates()                        # Final deduplication
     .to_df()
 )
 ```
@@ -273,7 +313,6 @@ clean_customers = (
 ### Financial Data Processing
 
 ```python
-# Clean financial transaction data
 financial_clean = (
     sx(transactions_df)
     .clean_column_names(case='snake')
@@ -282,6 +321,10 @@ financial_clean = (
     .standardize_booleans(subset=['is_recurring'])
     .cap_outliers(method='zscore', factor=3.0, subset=['amount'])
     .remove_whitespace()
+    .format_for_display(
+        rules={'amount': {'type': 'currency', 'symbol': '$', 'decimals': 2}},
+        column_case='title'
+    )
     .to_df()
 )
 ```
@@ -289,7 +332,6 @@ financial_clean = (
 ### Survey Data Standardization
 
 ```python
-# Clean survey responses
 survey_clean = (
     sx(survey_df)
     .clean_column_names(case='snake')
@@ -300,6 +342,10 @@ survey_clean = (
     .fill_missing(value='No Response')
     .remove_whitespace()
     .drop_single_value_columns()
+    .format_for_display(
+        rules={'age': {'type': 'thousands'}},
+        column_case='title'
+    )
     .to_df()
 )
 ```
@@ -328,6 +374,7 @@ df = (sx(df)
       .fill_missing(value='Unknown')
       .standardize_booleans()
       .remove_outliers(method='iqr')
+      .format_for_display(rules={'value': {'type': 'currency'}}, column_case='title')
       .to_df())
 ```
 
@@ -344,10 +391,11 @@ df = (sx(df)
 # Performance-optimized pipeline
 result = (
     sx(large_df)
-    .remove_duplicates()                        # Early deduplication saves memory
-    .drop_single_value_columns()                # Remove unnecessary columns first
-    .fill_missing(value=0, subset=['numeric_cols'])  # Target specific columns
-    .remove_outliers(method='iqr', subset=['revenue'])  # IQR is faster than zscore
+    .remove_duplicates()
+    .drop_single_value_columns()
+    .fill_missing(value=0, subset=['numeric_cols'])
+    .remove_outliers(method='iqr', subset=['revenue'])
+    .format_for_display(rules={'revenue': {'type': 'currency'}}, column_case=None)
     .to_df()
 )
 ```
@@ -356,13 +404,14 @@ result = (
 
 ## 🧪 Testing and Quality Assurance
 
-Sanex includes comprehensive test coverage with 86+ test cases covering:
+Sanex includes comprehensive test coverage with 118+ test cases covering:
 
 - ✅ pandas and polars compatibility
 - ✅ Edge cases and error handling  
 - ✅ Performance optimization
 - ✅ Data integrity preservation
 - ✅ Type safety and validation
+- ✅ Presentation formatting (currency, percentage, thousands, truncation, datetime, column casing)
 
 Run tests locally:
 ```bash
@@ -414,6 +463,14 @@ Sanex's modular architecture makes it easy to add new cleaning functions:
 ---
 
 ## 📋 Changelog
+
+### Version 0.3.0
+- ✨ Added `format_for_display` function + chain method for presentation formatting
+- ✨ Added support for currency, percentage, thousands, truncate, datetime formatting
+- ✨ Title-case header option integrated into formatting step
+- 🛠 Refactored internal formatting for pandas + polars parity
+- ✅ Expanded test suite (now 118+ tests) including display formatting
+- ⚡ Improved thousands formatting (no trailing .0 on whole floats)
 
 ### Version 0.2.0
 - ✨ Added comprehensive data extraction capabilities
