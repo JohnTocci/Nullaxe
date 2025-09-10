@@ -7,7 +7,10 @@ from .functions import (
     handle_outliers, cap_outliers, remove_outliers,
     standardize_booleans, remove_unwanted_rows_and_cols,
     extract_and_clean_numeric, clean_numeric, extract_email,
-    extract_with_regex, extract_phone_numbers, remove_punctuation)
+    extract_with_regex, extract_phone_numbers, remove_punctuation,
+    remove_special_characters, remove_emojis, remove_non_ascii,
+    remove_non_alphanumeric, remove_non_numeric, remove_pii,
+    remove_stopwords)
 import pandas as pd
 import polars as pl
 from typing import Union, List, Optional
@@ -392,6 +395,124 @@ class Sanex:
         This is a chainable method.
         """
         self._df = remove_punctuation(self._df, subset=subset)
+        return self
+
+    def remove_special_characters(self, subset: Optional[List[str]] = None):
+        """
+        Removes special characters from string entries in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for special character removal.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_special_characters(self._df, subset=subset)
+        return self
+
+    def remove_emojis(self, subset: Optional[List[str]] = None):
+        """
+        Removes emojis from string entries in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for emoji removal.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_emojis(self._df, subset=subset)
+        return self
+
+    def remove_non_ascii(self, subset: Optional[List[str]] = None):
+        """
+        Removes non-ASCII characters from string entries in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for non-ASCII character removal.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_non_ascii(self._df, subset=subset)
+        return self
+
+    def remove_non_alphanumeric(self, subset: Optional[List[str]] = None):
+        """
+        Removes non-alphanumeric characters from string entries in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for non-alphanumeric character removal.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_non_alphanumeric(self._df, subset=subset)
+        return self
+
+    def remove_non_numeric(self, subset: Optional[List[str]] = None):
+        """
+        Removes non-numeric characters from string entries in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for non-numeric character removal.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_non_numeric(self._df, subset=subset)
+        return self
+
+    def remove_pii(self, subset: Optional[List[str]] = None):
+        """
+        Removes personally identifiable information (PII) from specified string columns in the DataFrame.
+        PII patterns include email addresses, phone numbers, social security numbers, and URLs.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for PII removal.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        if subset is None:
+            # Handle different DataFrame types correctly
+            if isinstance(self._df, pd.DataFrame):
+                subset = list(self._df.columns)  # Use list constructor instead of tolist()
+            else:  # polars DataFrame
+                subset = self._df.columns  # Already a list in polars
+        self._df = remove_pii(self._df, subset=subset)
+        return self
+
+    def remove_stopwords(self, subset: Optional[List[str]] = None, language: str = 'english'):
+        """Removes stopwords from specified text columns.
+
+        Parameters:
+            subset: Columns to process (default all columns).
+            language: Stopword language key (default 'english').
+        """
+        if subset is None:
+            if isinstance(self._df, pd.DataFrame):
+                subset = list(self._df.columns)
+            else:
+                subset = self._df.columns
+        self._df = remove_stopwords(self._df, subset=subset, language=language)
         return self
 
     def to_df(self) -> DataFrameType:

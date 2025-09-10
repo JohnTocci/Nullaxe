@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 # Core metadata for your project.
 name = "sanex"
-version = "0.2.0"
+version = "0.2.1"
 authors = [
   { name="John Tocci", email="john@johntocci.com" },
 ]
@@ -35,6 +35,7 @@ classifiers = [
 dependencies = [
     "pandas>=1.0",
     "polars>=0.19",
+    "nltk>=3.8",
 ]
 
 [project.urls]
@@ -51,4 +52,3 @@ dev = [
     "build>=0.10",  # For building the package.
     "twine>=4.0",   # For uploading to PyPI.
 ]
-

@@ -91,7 +91,7 @@ print(clean_df.head())
 import sanex as sx
 
 # Initialize with any DataFrame
-cleaner = sx.Sanex(df)  # Works with pandas or polars DataFrames
+cleaner = sx(df)  # Works with pandas or polars DataFrames
 ```
 
 ### 📝 Column Name Standardization
@@ -249,7 +249,7 @@ df = pd.read_csv('messy_customer_data.csv')
 
 # Comprehensive cleaning pipeline
 clean_customers = (
-    sx.Sanex(df)
+    sx(df)
     .clean_column_names(case='snake')           # Standardize column names
     .fill_missing(value='Not Provided')        # Handle missing data
     .remove_whitespace()                        # Clean text
@@ -275,7 +275,7 @@ clean_customers = (
 ```python
 # Clean financial transaction data
 financial_clean = (
-    sx.Sanex(transactions_df)
+    sx(transactions_df)
     .clean_column_names(case='snake')
     .fill_missing(value=0, subset=['amount'])
     .extract_and_clean_numeric(subset=['amount', 'fee'])
@@ -291,7 +291,7 @@ financial_clean = (
 ```python
 # Clean survey responses
 survey_clean = (
-    sx.Sanex(survey_df)
+    sx(survey_df)
     .clean_column_names(case='snake')
     .standardize_booleans(
         true_values=['Yes', 'Y', 'Agree', 'True', '1'],
@@ -323,7 +323,7 @@ df = standardize_booleans(df)
 df = remove_outliers(df, method='iqr')
 
 # Sanex approach (clean and readable)
-df = (sx.Sanex(df)
+df = (sx(df)
       .remove_duplicates()
       .fill_missing(value='Unknown')
       .standardize_booleans()

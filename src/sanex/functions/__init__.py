@@ -17,6 +17,10 @@ from ._extract_email import extract_email
 from ._extract_with_regex import extract_with_regex
 from ._extract_phone_numbers import extract_phone_numbers
 from ._remove_punctuation import remove_punctuation
+from ._remove_special_characters import remove_special_characters, remove_emojis, remove_non_ascii, remove_non_alphanumeric, remove_non_numeric
+from ._remove_pii import remove_pii
+from ._remove_stopwords import remove_stopwords
+
 
 __all__ = [
     "clean_column_names",
@@ -46,4 +50,11 @@ __all__ = [
     "extract_with_regex",
     "extract_phone_numbers",
     "remove_punctuation",
+    "remove_special_characters",
+    "remove_emojis",
+    "remove_non_ascii",
+    "remove_non_alphanumeric",
+    "remove_non_numeric",
+    "remove_pii",
+    "remove_stopwords"
 ]
