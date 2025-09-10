@@ -4,14 +4,14 @@ import polars as pl
 import sys
 import os
 
-# Add the src directory to the path to import sanex
+# Add the src directory to the path to import nullaxe
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions._remove_duplicates import remove_duplicates
-from sanex.functions._drop_single_value_columns import drop_single_value_columns
-from sanex.functions._handle_outliers import handle_outliers, cap_outliers, remove_outliers
-from sanex.functions._standardize_booleans import standardize_booleans
-from sanex.functions._whitespace import remove_whitespace
+from nullaxe.functions._remove_duplicates import remove_duplicates
+from nullaxe.functions._drop_single_value_columns import drop_single_value_columns
+from nullaxe.functions._handle_outliers import handle_outliers, cap_outliers, remove_outliers
+from nullaxe.functions._standardize_booleans import standardize_booleans
+from nullaxe.functions._whitespace import remove_whitespace
 
 
 class TestDataCleaningFunctions:

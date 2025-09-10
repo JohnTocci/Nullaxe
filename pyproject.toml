@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 # Core metadata for your project.
-name = "sanex"
-version = "0.3.0"
+name = "nullaxe"
+version = "0.4.0"
 authors = [
   { name="John Tocci", email="john@johntocci.com" },
 ]
@@ -14,7 +14,7 @@ description = "A data cleaning library for Pandas and Polars DataFrames with a s
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.8"
-keywords = ["data cleaning", "pandas", "polars", "data science", "etl", "data processing"]
+keywords = ["data cleaning", "pandas", "polars", "data science", "etl", "data processing", "nullaxe"]
 classifiers = [
     # Standard classifiers to help users find your project.
     "Development Status :: 4 - Beta",
@@ -40,9 +40,9 @@ dependencies = [
 
 [project.urls]
 # Links related to your project.
-Homepage = "https://github.com/johntocci/sanex"
-Repository = "https://github.com/johntocci/sanex"
-"Bug Tracker" = "https://github.com/johntocci/sanex/issues"
+Homepage = "https://github.com/johntocci/nullaxe"
+Repository = "https://github.com/johntocci/nullaxe"
+"Bug Tracker" = "https://github.com/johntocci/nullaxe/issues"
 
 [project.optional-dependencies]
 # Dependencies needed for development, testing, and releasing.

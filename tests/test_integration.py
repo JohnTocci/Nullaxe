@@ -5,15 +5,15 @@ import sys
 import os
 import warnings
 
-# Add the src directory to the path to import sanex
+# Add the src directory to the path to import nullaxe
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-import sanex
-from sanex.cleaner import Sanex
+import nullaxe as nlx
+from nullaxe.cleaner import Nullaxe
 
 
-class TestSanexIntegration:
-    """Integration tests for the complete Sanex workflow."""
+class TestNullaxeIntegration:
+    """Integration tests for the complete Nullaxe workflow."""
 
     def test_complete_cleaning_workflow_pandas(self):
         """Test a complete data cleaning workflow with pandas DataFrame."""
@@ -37,8 +37,8 @@ class TestSanexIntegration:
         df = pd.concat([df, df.iloc[[1]]], ignore_index=True)
 
         # Complete cleaning workflow
-        sx = Sanex(df)
-        result = (sx
+        nlx_instance = Nullaxe(df)
+        result = (nlx_instance
                  .clean_column_names(case='snake')  # Clean column names
                  .remove_duplicates()               # Remove duplicate rows
                  .drop_single_value_columns()       # Drop single-value columns
@@ -71,7 +71,7 @@ class TestSanexIntegration:
         assert final_df.loc[0, 'first_name'] == 'John'  # Leading/trailing spaces removed
 
         # Check boolean standardization
-        assert final_df['boolean_col'].dtype == bool or final_df['boolean_col'].dtype == 'bool' or str(final_df['boolean_col'].dtype) == 'boolean'
+        assert final_df['boolean_col'].dtype == bool or str(final_df['boolean_col'].dtype) in ('bool', 'boolean')
 
     def test_complete_cleaning_workflow_polars(self):
         """Test a complete data cleaning workflow with polars DataFrame."""
@@ -85,8 +85,8 @@ class TestSanexIntegration:
         })
 
         # Complete cleaning workflow
-        sx = Sanex(df)
-        result = (sx
+        nlx_instance = Nullaxe(df)
+        result = (nlx_instance
                  .clean_column_names(case='camel')   # Clean column names
                  .drop_single_value_columns()        # Drop single-value columns
                  .fill_missing(value='MISSING')      # Fill missing values
@@ -113,10 +113,10 @@ class TestSanexIntegration:
             'B': [4, 5, 6]
         })
 
-        sx = Sanex(df)
+        nlx_instance = Nullaxe(df)
 
         # Chain methods - some may not have visible effects but shouldn't break
-        result = (sx
+        result = (nlx_instance
                  .clean_column_names()
                  .remove_duplicates()        # No duplicates to remove
                  .drop_single_value_columns() # No single-value columns
@@ -125,7 +125,7 @@ class TestSanexIntegration:
                  )
 
         # Should complete without errors
-        assert isinstance(result, Sanex)
+        assert isinstance(result, Nullaxe)
         assert result._df.shape == (3, 2)
 
     def test_data_extraction_workflow(self):
@@ -139,11 +139,11 @@ class TestSanexIntegration:
             ]
         })
 
-        sx = Sanex(df)
+        nlx_instance = Nullaxe(df)
 
         # Apply data extraction methods if available
         try:
-            result = sx.extract_email().extract_phone_numbers().extract_and_clean_numeric()
+            result = nlx_instance.extract_email().extract_phone_numbers().extract_and_clean_numeric()
             final_df = result._df
 
             # Should have new columns for extracted data
@@ -152,7 +152,7 @@ class TestSanexIntegration:
             assert 'contact_info_numeric' in final_df.columns
 
         except AttributeError:
-            # Methods might not be available in the Sanex class yet
+            # Methods might not be available in the Nullaxe class yet
             # This tests that the workflow can be adapted
             pass
 
@@ -170,19 +170,19 @@ class TestSanexIntegration:
         # Add some duplicates
         df = pd.concat([df, df.iloc[:100]], ignore_index=True)
 
-        sx = Sanex(df)
+        nlx_instance = Nullaxe(df)
 
         # Should handle large dataset without issues
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")  # Ignore performance warnings
 
-            result = (sx
+            result = (nlx_instance
                      .clean_column_names()
                      .remove_duplicates()
                      .standardize_booleans()
                      )
 
-            assert isinstance(result, Sanex)
+            assert isinstance(result, Nullaxe)
             assert result._df.shape[0] <= df.shape[0]  # Duplicates removed or same size
 
     def test_mixed_data_types_handling(self):
@@ -193,32 +193,32 @@ class TestSanexIntegration:
             'text_col': ['a', 'b', 'c', 'd', 'e', 'f', 'g']
         })
 
-        sx = Sanex(df)
+        nlx_instance = Nullaxe(df)
 
         # Should handle mixed data types gracefully
-        result = (sx
+        result = (nlx_instance
                  .clean_column_names()
                  .fill_missing(value='FILLED')
                  .remove_whitespace()
                  )
 
-        assert isinstance(result, Sanex)
+        assert isinstance(result, Nullaxe)
         assert result._df.shape == df.shape
 
     def test_empty_dataframe_workflow(self):
         """Test workflow with empty DataFrame."""
         empty_df = pd.DataFrame()
 
-        sx = Sanex(empty_df)
+        nlx_instance = Nullaxe(empty_df)
 
         # Should handle empty DataFrame gracefully
-        result = (sx
+        result = (nlx_instance
                  .clean_column_names()
                  .remove_duplicates()
                  .fill_missing()
                  )
 
-        assert isinstance(result, Sanex)
+        assert isinstance(result, Nullaxe)
         assert result._df.shape == (0, 0)
 
     def test_single_row_dataframe(self):
@@ -229,15 +229,15 @@ class TestSanexIntegration:
             'Age': [30]
         })
 
-        sx = Sanex(single_row_df)
+        nlx_instance = Nullaxe(single_row_df)
 
-        result = (sx
+        result = (nlx_instance
                  .clean_column_names()
                  .remove_duplicates()
                  .fill_missing()
                  )
 
-        assert isinstance(result, Sanex)
+        assert isinstance(result, Nullaxe)
         assert result._df.shape == (1, 3)
         assert list(result._df.columns) == ['first_name', 'last_name', 'age']
 
@@ -248,17 +248,17 @@ class TestSanexIntegration:
             'B': [4, 5, 6]
         })
 
-        sx = Sanex(df)
+        nlx_instance = Nullaxe(df)
 
         # Test with invalid parameters - should either work or raise clear errors
         try:
-            result = sx.clean_column_names(case='invalid_case')
+            result = nlx_instance.clean_column_names(case='invalid_case')
             # If it doesn't raise an error, it should default to a valid case
-            assert isinstance(result, Sanex)
+            assert isinstance(result, Nullaxe)
         except (ValueError, KeyError):
             # Expected behavior for invalid case
             pass
 
         # Valid chaining should still work
-        result = sx.clean_column_names(case='snake').remove_duplicates()
-        assert isinstance(result, Sanex)
+        result = nlx_instance.clean_column_names(case='snake').remove_duplicates()
+        assert isinstance(result, Nullaxe)

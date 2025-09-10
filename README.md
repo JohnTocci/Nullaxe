@@ -1,15 +1,15 @@
-<h1 align="center">🧹 Sanex</h1>
+<h1 align="center">🧹 Nullaxe</h1>
 
 <div align="center">
 
-[![PyPI version](https://img.shields.io/pypi/v/sanex.svg)](https://pypi.org/project/sanex/)
+[![PyPI version](https://img.shields.io/pypi/v/nullaxe.svg)](https://pypi.org/project/nullaxe/)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 </div>
 
-**Sanex** is a comprehensive, high-performance data cleaning and preprocessing library for Python, designed to work seamlessly with both **pandas** and **polars** DataFrames. With its intuitive, chainable API, Sanex transforms the traditionally tedious process of data cleaning into an elegant, readable workflow.
+**Nullaxe** is a comprehensive, high-performance data cleaning and preprocessing library for Python, designed to work seamlessly with both **pandas** and **polars** DataFrames. With its intuitive, chainable API, Nullaxe transforms the traditionally tedious process of data cleaning into an elegant, readable workflow.
 
 ---
 
@@ -29,10 +29,10 @@
 
 ## 📦 Installation
 
-Install Sanex easily with pip:
+Install Nullaxe easily with pip:
 
 ```bash
-pip install sanex
+pip install nullaxe
 ```
 
 **Requirements:**
@@ -48,7 +48,7 @@ Here's how to transform messy data into clean, analysis-ready datasets:
 
 ```python
 import pandas as pd
-import sanex as sx
+import nullaxe as nlx
 
 # Create a messy sample dataset
 data = {
@@ -65,7 +65,7 @@ df = pd.DataFrame(data)
 
 # Clean the entire dataset with a single chain
 clean_df = (
-    sx(df)
+    nlx(df)
     .clean_column_names()                    # Standardize column names
     .fill_missing(value='Unknown')           # Fill missing values
     .remove_whitespace()                     # Clean whitespace
@@ -96,10 +96,10 @@ print(clean_df.head())
 ### 🏗️ Initialization
 
 ```python
-import sanex as sx
+import nullaxe as nlx
 
 # Initialize with any DataFrame
-cleaner = sx(df)  # Works with pandas or polars DataFrames
+cleaner = nlx(df)  # Works with pandas or polars DataFrames
 ```
 
 ### 📝 Column Name Standardization
@@ -112,7 +112,7 @@ Transform column names to consistent formats:
 
 # Specific case conversions
 .snakecase()                       # column_name
-.camelcase()                       # columnName  
+.camelcase()                       # columnName
 .pascalcase()                      # ColumnName
 .kebabcase()                       # column-name
 .titlecase()                       # Column Name
@@ -201,7 +201,7 @@ Convert and standardize data types:
 .standardize_booleans()                          # Convert 'yes/no', 'true/false', etc.
 .standardize_booleans(
     true_values=['yes', 'y', '1', 'true'],       # Custom true values
-    false_values=['no', 'n', '0', 'false'],     # Custom false values  
+    false_values=['no', 'n', '0', 'false'],     # Custom false values
     columns=['active', 'verified']              # Specific columns
 )
 ```
@@ -219,7 +219,7 @@ Extract structured data from unstructured text:
 .extract_email()                                 # Extract emails from all columns
 .extract_email(subset=['contact_info'])          # From specific columns
 
-# Phone number extraction  
+# Phone number extraction
 .extract_phone_numbers()                         # Extract phone numbers
 .extract_phone_numbers(subset=['contact'])       # From specific columns
 
@@ -262,7 +262,7 @@ Supported rule types:
 
 You can also call the function directly:
 ```python
-from sanex.functions import format_for_display
+from nullaxe.functions import format_for_display
 formatted = format_for_display(df, rules=..., column_case='title')
 ```
 
@@ -280,14 +280,14 @@ formatted = format_for_display(df, rules=..., column_case='title')
 
 ```python
 import pandas as pd
-import sanex as sx
+import nullaxe as nlx
 
 # Load messy customer data
 df = pd.read_csv('messy_customer_data.csv')
 
 # Comprehensive cleaning + formatting pipeline
 clean_customers = (
-    sx(df)
+    nlx(df)
     .clean_column_names(case='snake')
     .fill_missing(value='Not Provided')
     .remove_whitespace()
@@ -314,7 +314,7 @@ clean_customers = (
 
 ```python
 financial_clean = (
-    sx(transactions_df)
+    nlx(transactions_df)
     .clean_column_names(case='snake')
     .fill_missing(value=0, subset=['amount'])
     .extract_and_clean_numeric(subset=['amount', 'fee'])
@@ -333,7 +333,7 @@ financial_clean = (
 
 ```python
 survey_clean = (
-    sx(survey_df)
+    nlx(survey_df)
     .clean_column_names(case='snake')
     .standardize_booleans(
         true_values=['Yes', 'Y', 'Agree', 'True', '1'],
@@ -354,7 +354,7 @@ survey_clean = (
 
 ## 🔄 Method Chaining Benefits
 
-Sanex's chainable API provides several advantages:
+Nullaxe's chainable API provides several advantages:
 
 1. **Readability**: Each step is clear and self-documenting
 2. **Maintainability**: Easy to add, remove, or reorder operations
@@ -368,8 +368,8 @@ df = fill_missing(df, value='Unknown')
 df = standardize_booleans(df)
 df = remove_outliers(df, method='iqr')
 
-# Sanex approach (clean and readable)
-df = (sx(df)
+# Nullaxe approach (clean and readable)
+df = (nlx(df)
       .remove_duplicates()
       .fill_missing(value='Unknown')
       .standardize_booleans()
@@ -382,15 +382,15 @@ df = (sx(df)
 
 ## 🚀 Performance Tips
 
-1. **Use polars for large datasets** - Sanex automatically optimizes for polars' performance
-2. **Chain operations efficiently** - Sanex minimizes intermediate copies
+1. **Use polars for large datasets** - Nullaxe automatically optimizes for polars' performance
+2. **Chain operations efficiently** - Nullaxe minimizes intermediate copies
 3. **Specify subsets** - Process only the columns you need
 4. **Choose appropriate outlier methods** - IQR is faster, Z-score is more sensitive
 
 ```python
 # Performance-optimized pipeline
 result = (
-    sx(large_df)
+    nlx(large_df)
     .remove_duplicates()
     .drop_single_value_columns()
     .fill_missing(value=0, subset=['numeric_cols'])
@@ -404,10 +404,10 @@ result = (
 
 ## 🧪 Testing and Quality Assurance
 
-Sanex includes comprehensive test coverage with 118+ test cases covering:
+Nullaxe includes comprehensive test coverage with 118+ test cases covering:
 
 - ✅ pandas and polars compatibility
-- ✅ Edge cases and error handling  
+- ✅ Edge cases and error handling
 - ✅ Performance optimization
 - ✅ Data integrity preservation
 - ✅ Type safety and validation
@@ -415,8 +415,8 @@ Sanex includes comprehensive test coverage with 118+ test cases covering:
 
 Run tests locally:
 ```bash
-git clone https://github.com/johntocci/sanex
-cd sanex
+git clone https://github.com/johntocci/nullaxe
+cd nullaxe
 pip install -e .[dev]
 pytest tests/
 ```
@@ -425,7 +425,7 @@ pytest tests/
 
 ## 🤝 Contributing
 
-We welcome contributions! Sanex is designed to be extensible and community-driven.
+We welcome contributions! Nullaxe is designed to be extensible and community-driven.
 
 ### How to Contribute
 
@@ -440,8 +440,8 @@ We welcome contributions! Sanex is designed to be extensible and community-drive
 
 ```bash
 # Clone and setup development environment
-git clone https://github.com/johntocci/sanex
-cd sanex
+git clone https://github.com/johntocci/nullaxe
+cd nullaxe
 pip install -e .[dev]
 
 # Run tests
@@ -453,17 +453,18 @@ black src/ tests/
 
 ### Adding New Functions
 
-Sanex's modular architecture makes it easy to add new cleaning functions:
+Nullaxe's modular architecture makes it easy to add new cleaning functions:
 
-1. Create your function in `src/sanex/functions/`
-2. Add it to the imports in `src/sanex/functions/__init__.py`
-3. Add a corresponding method to the `Sanex` class
+1. Create your function in `src/nullaxe/functions/`
+2. Add it to the imports in `src/nullaxe/functions/__init__.py`
+3. Add a corresponding method to the `Nullaxe` class
 4. Write comprehensive tests in `tests/`
 
 ---
 
 ## 📋 Changelog
 
+- Migration: replace `import sanex as nlx` with `import nullaxe as nlx` and `sx(` with `nlx(`
 ### Version 0.3.0
 - ✨ Added `format_for_display` function + chain method for presentation formatting
 - ✨ Added support for currency, percentage, thousands, truncate, datetime formatting
@@ -498,7 +499,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Built with ❤️ for the data science community
 - Inspired by the need for simple, powerful data cleaning tools
-- Thanks to all contributors and users who help improve Sanex
+- Thanks to all contributors and users who help improve Nullaxe
 
 ---
 
@@ -506,6 +507,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ by [John Tocci](https://github.com/johntocci)**
 
-[⭐ Star us on GitHub](https://github.com/johntocci/sanex) | [🐛 Report Issues](https://github.com/johntocci/sanex/issues) | [💡 Request Features](https://github.com/johntocci/sanex/issues)
+[⭐ Star us on GitHub](https://github.com/johntocci/nullaxe) | [🐛 Report Issues](https://github.com/johntocci/nullaxe/issues) | [💡 Request Features](https://github.com/johntocci/nullaxe/issues)
 
 </div>

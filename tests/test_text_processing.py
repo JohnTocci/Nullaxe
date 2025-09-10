@@ -4,12 +4,12 @@ import polars as pl
 import sys
 import os
 
-# Add the src directory to the path to import sanex
+# Add the src directory to the path to import nullaxe
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions._replace_text import replace_text
-from sanex.functions._remove_punctuation import remove_punctuation
-from sanex.functions._extract_with_regex import extract_with_regex
+from nullaxe.functions._replace_text import replace_text
+from nullaxe.functions._remove_punctuation import remove_punctuation
+from nullaxe.functions._extract_with_regex import extract_with_regex
 
 
 class TestTextProcessingFunctions:

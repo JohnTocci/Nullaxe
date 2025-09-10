@@ -8,7 +8,7 @@ import pytest
 # Ensure src on path (mirrors style in existing tests)
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions._format_for_display import format_for_display
+from nullaxe.functions._format_for_display import format_for_display
 
 
 @pytest.fixture()

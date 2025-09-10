@@ -6,8 +6,8 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions import remove_stopwords
-from sanex.cleaner import Sanex
+from nullaxe.functions import remove_stopwords
+from nullaxe.cleaner import Nullaxe
 
 
 def test_remove_stopwords_pandas_basic():
@@ -47,19 +47,19 @@ def test_remove_stopwords_multilingual():
         pytest.skip('French stopwords not available in environment')
 
 
-def test_remove_stopwords_chain_with_sanex_pandas():
+def test_remove_stopwords_chain_with_nullaxe_pandas():
     df = pd.DataFrame({'text': ['This is a test of the chained interface']})
-    sx = Sanex(df)
-    sx.remove_stopwords(subset=['text'])
-    tokens = sx.to_df().loc[0, 'text'].split()
+    nlx = Nullaxe(df)
+    nlx.remove_stopwords(subset=['text'])
+    tokens = nlx.to_df().loc[0, 'text'].split()
     assert 'This' not in tokens and 'is' not in tokens and 'a' not in tokens
 
 
-def test_remove_stopwords_chain_with_sanex_polars():
+def test_remove_stopwords_chain_with_nullaxe_polars():
     df = pl.DataFrame({'text': ['This is a test line for polars']})
-    sx = Sanex(df)
-    sx.remove_stopwords(subset=['text'])
-    tokens = sx.to_df()[0, 'text'].split()
+    nlx = Nullaxe(df)
+    nlx.remove_stopwords(subset=['text'])
+    tokens = nlx.to_df()[0, 'text'].split()
     assert 'This' not in tokens and 'is' not in tokens and 'a' not in tokens
 
 

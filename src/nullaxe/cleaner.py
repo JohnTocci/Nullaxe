@@ -17,7 +17,7 @@ from typing import Union, List, Optional
 
 DataFrameType = Union[pd.DataFrame, pl.DataFrame]
 
-class Sanex:
+class Nullaxe:
     def __init__(self, df):
         if not isinstance(df, (pd.DataFrame, pl.DataFrame)):
             raise TypeError("Input must be a pandas or polars DataFrame.")
@@ -35,7 +35,7 @@ class Sanex:
                                 'lower', and 'screaming_snake'.
 
                 Returns:
-                    Sanex: The instance of the class to allow method chaining.
+                    Nullaxe: The instance of the class to allow method chaining.
 
                 This is a chainable method.
                 """
@@ -43,13 +43,10 @@ class Sanex:
                 return self
 
     def remove_duplicates(self):
-        """
-        Removes duplicate rows and columns from the DataFrame.
+        """Removes duplicate rows and columns from the DataFrame.
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
-
-        This is a chainable method.
+            Nullaxe: Chainable instance.
         """
         self._df = remove_duplicates(self._df)
         return self
@@ -126,7 +123,7 @@ class Sanex:
         subset (list): List of column names to consider for filling. Default is None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -144,7 +141,7 @@ class Sanex:
         axis (str): 'rows' to drop rows, 'columns' to drop columns. Default is 'rows'.
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -156,7 +153,7 @@ class Sanex:
         Removes leading and trailing whitespace from string entries in the DataFrame.
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -164,69 +161,22 @@ class Sanex:
         return self
 
     def replace_text(self, to_replace: str, value: str, subset: list = None):
-        """
-        Replaces occurrences of a specified substring with another substring in the DataFrame.
-
-        Parameters:
-        to_replace (str): The substring to be replaced.
-        value (str): The substring to replace with.
-        subset (list): List of column names to consider for replacement. Default is None (all columns).
-
-        Returns:
-            Sanex: The instance of the class to allow method chaining.
-
-        This is a chainable method.
-        """
+        """Replace occurrences of a substring with another substring."""
         self._df = replace_text(self._df, to_replace=to_replace, value=value, subset=subset)
         return self
 
     def drop_single_value_columns(self):
-        """
-        Drops columns that contain only a single unique value from the DataFrame.
-
-        Returns:
-            Sanex: The instance of the class to allow method chaining.
-
-        This is a chainable method.
-        """
+        """Drop columns that contain only a single unique value."""
         self._df = drop_single_value_columns(self._df)
         return self
 
     def handle_outliers(self, method: str = 'iqr', factor: float = 1.5, subset: list = None):
-        """
-        Handles outliers in the DataFrame using the specified method.
-
-        Parameters:
-        method (str): The method to use for handling outliers. Default is 'iqr'.
-                      Supported methods include 'iqr' (Interquartile Range) and 'zscore' (Z-Score).
-        factor (float): The factor to use for determining outlier thresholds. Default is 1.5.
-                        For 'iqr', this is the multiplier for the IQR. For 'zscore', this is the Z-Score threshold.
-        subset (list): List of column names to consider for outlier handling. Default is None (all numeric columns).
-
-        Returns:
-            Sanex: The instance of the class to allow method chaining.
-
-        This is a chainable method.
-        """
+        """Handle outliers using the specified method."""
         self._df = handle_outliers(self._df, method=method, factor=factor, subset=subset)
         return self
 
     def cap_outliers(self, method: str = 'iqr', factor: float = 1.5, subset: list = None):
-        """
-        Caps outliers in the DataFrame using the specified method.
-
-        Parameters:
-        method (str): The method to use for capping outliers. Default is 'iqr'.
-                      Supported methods include 'iqr' (Interquartile Range) and 'zscore' (Z-Score).
-        factor (float): The factor to use for determining outlier thresholds. Default is 1.5.
-                        For 'iqr', this is the multiplier for the IQR. For 'zscore', this is the Z-Score threshold.
-        subset (list): List of column names to consider for outlier capping. Default is None (all numeric columns).
-
-        Returns:
-            Sanex: The instance of the class to allow method chaining.
-
-        This is a chainable method.
-        """
+        """Cap outliers using the specified method."""
         self._df = cap_outliers(self._df, method=method, factor=factor, subset=subset)
         return self
 
@@ -242,7 +192,7 @@ class Sanex:
         subset (list): List of column names to consider for outlier removal. Default is None (all numeric columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -259,7 +209,7 @@ class Sanex:
         columns (list): List of column names to consider for boolean standardization. Default is None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -275,7 +225,7 @@ class Sanex:
             Defaults to [None, '', 'NA', 'N/A', 'null', 'NULL', 'NaN'].
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -291,7 +241,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -311,7 +261,7 @@ class Sanex:
         subset (list): List of column names to consider for cleaning. Default is None (all numeric columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -328,7 +278,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -345,16 +295,15 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
         if subset is None:
-            # Handle different DataFrame types correctly
             if isinstance(self._df, pd.DataFrame):
-                subset = list(self._df.columns)  # Use list constructor instead of tolist()
-            else:  # polars DataFrame
-                subset = self._df.columns  # Already a list in polars
+                subset = list(self._df.columns)
+            else:
+                subset = self._df.columns
         pattern = input("Enter the regex pattern to extract: ")
         self._df = extract_with_regex(self._df, pattern=pattern, subset=subset)
         return self
@@ -368,18 +317,17 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
         if subset is None:
-            # Handle different DataFrame types correctly
             if isinstance(self._df, pd.DataFrame):
-                subset = list(self._df.columns)  # Use list constructor instead of tolist()
-            else:  # polars DataFrame
-                subset = self._df.columns  # Already a list in polars
+                subset = list(self._df.columns)
+            else:
+                subset = self._df.columns
         self._df = extract_phone_numbers(self._df, subset=subset)
-        return self  # Add missing return statement
+        return self
 
     def remove_punctuation(self, subset: Optional[List[str]] = None):
         """
@@ -390,7 +338,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -406,7 +354,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -422,7 +370,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -438,7 +386,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -454,7 +402,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -470,7 +418,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -487,16 +435,15 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
         if subset is None:
-            # Handle different DataFrame types correctly
             if isinstance(self._df, pd.DataFrame):
-                subset = list(self._df.columns)  # Use list constructor instead of tolist()
-            else:  # polars DataFrame
-                subset = self._df.columns  # Already a list in polars
+                subset = list(self._df.columns)
+            else:
+                subset = self._df.columns
         self._df = remove_pii(self._df, subset=subset)
         return self
 
@@ -526,7 +473,7 @@ class Sanex:
             Defaults to None (all columns).
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """
@@ -556,7 +503,7 @@ class Sanex:
             Set to None to leave column names as they are.
 
         Returns:
-            Sanex: The instance of the class to allow method chaining.
+            Nullaxe: The instance of the class to allow method chaining.
 
         This is a chainable method.
         """

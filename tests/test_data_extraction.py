@@ -4,12 +4,12 @@ import polars as pl
 import sys
 import os
 
-# Add the src directory to the path to import sanex
+# Add the src directory to the path to import nullaxe
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions._extract_email import extract_email
-from sanex.functions._extract_phone_numbers import extract_phone_numbers
-from sanex.functions._extract_and_clean_numeric import extract_and_clean_numeric, clean_numeric
+from nullaxe.functions._extract_email import extract_email
+from nullaxe.functions._extract_phone_numbers import extract_phone_numbers
+from nullaxe.functions._extract_and_clean_numeric import extract_and_clean_numeric, clean_numeric
 
 
 class TestDataExtractionFunctions:

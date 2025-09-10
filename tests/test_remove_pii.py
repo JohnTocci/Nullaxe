@@ -6,7 +6,7 @@ import os
 # Ensure src on path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions import remove_pii
+from nullaxe.functions import remove_pii
 
 
 def test_remove_pii_pandas_basic():
@@ -73,4 +73,3 @@ def test_remove_pii_subset_missing_columns_graceful():
     # Subset includes non-existent column; function should ignore it
     result = remove_pii(df.copy(), subset=['missing', 'text'])
     assert '[REDACTED_PHONE]' in result.loc[0, 'text']
-

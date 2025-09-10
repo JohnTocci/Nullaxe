@@ -7,7 +7,7 @@ import os
 # Ensure src on path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions._remove_special_characters import (
+from nullaxe.functions._remove_special_characters import (
     remove_special_characters,
     remove_emojis,
     remove_non_alphanumeric,

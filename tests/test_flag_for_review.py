@@ -7,7 +7,7 @@ import os
 # Ensure src is on path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions._flag_for_review import flag_for_review
+from nullaxe.functions._flag_for_review import flag_for_review
 
 
 def test_flag_for_review_pandas_basic():
@@ -59,4 +59,3 @@ def test_flag_for_review_empty_patterns_error():
     df = pd.DataFrame({'text': ['something']})
     with pytest.raises(ValueError):
         flag_for_review(df, subset=['text'], patterns=[])
-

@@ -5,10 +5,10 @@ import numpy as np
 import sys
 import os
 
-# Add the src directory to the path to import sanex
+# Add the src directory to the path to import nullaxe
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
-from sanex.functions._missing_data import fill_missing, drop_missing
+from nullaxe.functions._missing_data import fill_missing, drop_missing
 
 
 class TestMissingDataFunctions:
