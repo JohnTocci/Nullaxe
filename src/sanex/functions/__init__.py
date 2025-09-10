@@ -20,6 +20,7 @@ from ._remove_punctuation import remove_punctuation
 from ._remove_special_characters import remove_special_characters, remove_emojis, remove_non_ascii, remove_non_alphanumeric, remove_non_numeric
 from ._remove_pii import remove_pii
 from ._remove_stopwords import remove_stopwords
+from ._flag_for_review import flag_for_review
 
 
 __all__ = [
@@ -56,5 +57,6 @@ __all__ = [
     "remove_non_alphanumeric",
     "remove_non_numeric",
     "remove_pii",
-    "remove_stopwords"
+    "remove_stopwords",
+    "flag_for_review",
 ]

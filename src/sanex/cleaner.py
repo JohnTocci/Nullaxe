@@ -10,7 +10,7 @@ from .functions import (
     extract_with_regex, extract_phone_numbers, remove_punctuation,
     remove_special_characters, remove_emojis, remove_non_ascii,
     remove_non_alphanumeric, remove_non_numeric, remove_pii,
-    remove_stopwords)
+    remove_stopwords, flag_for_review)
 import pandas as pd
 import polars as pl
 from typing import Union, List, Optional
@@ -513,6 +513,24 @@ class Sanex:
             else:
                 subset = self._df.columns
         self._df = remove_stopwords(self._df, subset=subset, language=language)
+        return self
+
+    def flag_for_review(self, condition: str, subset: Optional[List[str]] = None):
+        """
+        Flags rows in the DataFrame for review based on a specified condition.
+
+        Parameters:
+        condition (str): The condition to evaluate for flagging rows.
+                         This should be a valid expression that can be evaluated.
+        subset (List[str], optional): List of column names to consider for flagging.
+            Defaults to None (all columns).
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = flag_for_review(self._df, condition=condition, subset=subset)
         return self
 
     def to_df(self) -> DataFrameType:
