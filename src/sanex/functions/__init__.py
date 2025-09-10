@@ -21,6 +21,7 @@ from ._remove_special_characters import remove_special_characters, remove_emojis
 from ._remove_pii import remove_pii
 from ._remove_stopwords import remove_stopwords
 from ._flag_for_review import flag_for_review
+from ._format_for_display import format_for_display
 
 
 __all__ = [
@@ -59,4 +60,5 @@ __all__ = [
     "remove_pii",
     "remove_stopwords",
     "flag_for_review",
+    "format_for_display"
 ]

@@ -10,7 +10,7 @@ from .functions import (
     extract_with_regex, extract_phone_numbers, remove_punctuation,
     remove_special_characters, remove_emojis, remove_non_ascii,
     remove_non_alphanumeric, remove_non_numeric, remove_pii,
-    remove_stopwords, flag_for_review)
+    remove_stopwords, flag_for_review, format_for_display)
 import pandas as pd
 import polars as pl
 from typing import Union, List, Optional
@@ -531,6 +531,36 @@ class Sanex:
         This is a chainable method.
         """
         self._df = flag_for_review(self._df, condition=condition, subset=subset)
+        return self
+
+    def format_for_display(self, rules: dict, column_case: Optional[str] = 'title'):
+        """
+        Applies various formatting rules to DataFrame columns for presentation.
+
+        This function is designed to be the final step in a cleaning pipeline,
+        converting a clean DataFrame into a human-readable format for reports,
+        dashboards, or other displays. Note that this will often convert
+        numeric columns to string/object types.
+
+        Parameters:
+        rules (Dict[str, Dict]): A dictionary where each key is a column name
+            and the value is another dictionary specifying the formatting rule.
+            The supported rule types are:
+            - {'type': 'currency', 'symbol': '$', 'decimals': 2}
+            - {'type': 'percentage', 'decimals': 1}
+            - {'type': 'thousands'}
+            - {'type': 'truncate', 'length': 50}
+            - {'type': 'datetime', 'format': '%B %d, %Y'}
+        column_case (Optional[str]): The desired case for the column headers in the
+            final output. Currently supports 'title'. Defaults to 'title'.
+            Set to None to leave column names as they are.
+
+        Returns:
+            Sanex: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = format_for_display(self._df, rules=rules, column_case=column_case)
         return self
 
     def to_df(self) -> DataFrameType:
