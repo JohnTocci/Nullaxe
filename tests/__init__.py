@@ -1,2 +1,2 @@
-# Test package for Sanex
+# Test package for Nullaxe
 
