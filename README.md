@@ -1,4 +1,4 @@
-<h1 align="center">🧹 Nullaxe</h1>
+<h1 align="center">Nullaxe</h1>
 
 <div align="center">
 
@@ -13,21 +13,21 @@
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-- **🔗 Fluent, Chainable API**: Clean your data in a single, readable chain of commands
-- **⚡ Dual Backend Support**: Works effortlessly with both pandas and polars DataFrames
-- **🧹 Comprehensive Cleaning**: From basic cleaning to advanced data extraction and transformation
-- **🪄 Display Formatting Pipeline**: Format columns for presentation (currency, percentages, thousands separators, date formatting, truncation, title-cased headers)
-- **📊 Intelligent Outlier Detection**: Multiple methods including IQR and Z-score analysis
-- **🔍 Advanced Data Extraction**: Extract emails, phone numbers, and custom patterns with regex
-- **🎯 Smart Type Handling**: Automatic type inference and standardization
-- **📈 Performance Optimized**: Designed for speed and memory efficiency
-- **🔧 Extensible**: Easily add custom cleaning functions to your pipeline
+- **Fluent, Chainable API**: Clean your data in a single, readable chain of commands
+- **Dual Backend Support**: Works effortlessly with both pandas and polars DataFrames
+- **Comprehensive Cleaning**: From basic cleaning to advanced data extraction and transformation
+- **Display Formatting Pipeline**: Format columns for presentation (currency, percentages, thousands separators, date formatting, truncation, title-cased headers)
+- **Intelligent Outlier Detection**: Multiple methods including IQR and Z-score analysis
+- **Advanced Data Extraction**: Extract emails, phone numbers, and custom patterns with regex
+- **Smart Type Handling**: Automatic type inference and standardization
+- **Performance Optimized**: Designed for speed and memory efficiency
+- **Extensible**: Easily add custom cleaning functions to your pipeline
 
 ---
 
-## 📦 Installation
+## Installation
 
 Install Nullaxe easily with pip:
 
@@ -42,7 +42,7 @@ pip install nullaxe
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 Here's how to transform messy data into clean, analysis-ready datasets:
 
@@ -91,9 +91,9 @@ print(clean_df.head())
 
 ---
 
-## 📖 Complete API Reference
+## Complete API Reference
 
-### 🏗️ Initialization
+### Initialization
 
 ```python
 import nullaxe as nlx
@@ -102,7 +102,7 @@ import nullaxe as nlx
 cleaner = nlx(df)  # Works with pandas or polars DataFrames
 ```
 
-### 📝 Column Name Standardization
+### Column Name Standardization
 
 Transform column names to consistent formats:
 
@@ -120,7 +120,7 @@ Transform column names to consistent formats:
 .screaming_snakecase()             # COLUMN_NAME
 ```
 
-### 🔄 Data Deduplication
+### Data Deduplication
 
 Remove duplicate data efficiently:
 
@@ -128,7 +128,7 @@ Remove duplicate data efficiently:
 .remove_duplicates()               # Remove duplicate rows across all columns
 ```
 
-### ❌ Missing Data Management
+### Missing Data Management
 
 Handle missing values with precision:
 
@@ -145,7 +145,7 @@ Handle missing values with precision:
 .drop_missing(subset=['name', 'email'])          # Consider only specific columns
 ```
 
-### 🧽 Text and Whitespace Cleaning
+### Text and Whitespace Cleaning
 
 Clean and standardize text data:
 
@@ -157,7 +157,7 @@ Clean and standardize text data:
 .remove_punctuation(subset=['description'])      # Remove from specific columns
 ```
 
-### 🗂️ Column Management
+### Column Management
 
 Manage DataFrame structure:
 
@@ -169,7 +169,7 @@ Manage DataFrame structure:
 )
 ```
 
-### 📊 Outlier Detection and Handling
+### Outlier Detection and Handling
 
 Sophisticated outlier management:
 
@@ -192,7 +192,7 @@ Sophisticated outlier management:
 - **IQR (Interquartile Range)**: `Q1 - factor*IQR` to `Q3 + factor*IQR`
 - **Z-Score**: Values beyond `factor` standard deviations from the mean
 
-### 🔧 Data Type Standardization
+### Data Type Standardization
 
 Convert and standardize data types:
 
@@ -210,7 +210,7 @@ Convert and standardize data types:
 - **True**: 'true', '1', 't', 'yes', 'y', 'on'
 - **False**: 'false', '0', 'f', 'no', 'n', 'off'
 
-### 🔍 Advanced Data Extraction
+### Advanced Data Extraction
 
 Extract structured data from unstructured text:
 
@@ -236,7 +236,7 @@ Extract structured data from unstructured text:
 .clean_numeric(method='zscore', factor=2.0)      # Custom outlier parameters
 ```
 
-### 🪄 Display / Presentation Formatting (NEW in 0.3.0)
+### Display / Presentation Formatting (NEW in 0.3.0)
 
 Format cleaned data for reports, dashboards, exports:
 
@@ -266,7 +266,7 @@ from nullaxe.functions import format_for_display
 formatted = format_for_display(df, rules=..., column_case='title')
 ```
 
-### 📤 Output
+### Output
 
 ```python
 .to_df()                                         # Return the cleaned DataFrame
@@ -274,7 +274,7 @@ formatted = format_for_display(df, rules=..., column_case='title')
 
 ---
 
-## 🎯 Advanced Usage Examples
+## Advanced Usage Examples
 
 ### Real-World Data Cleaning Pipeline
 
@@ -352,7 +352,7 @@ survey_clean = (
 
 ---
 
-## 🔄 Method Chaining Benefits
+## Method Chaining Benefits
 
 Nullaxe's chainable API provides several advantages:
 
@@ -380,7 +380,7 @@ df = (nlx(df)
 
 ---
 
-## 🚀 Performance Tips
+## Performance Tips
 
 1. **Use polars for large datasets** - Nullaxe automatically optimizes for polars' performance
 2. **Chain operations efficiently** - Nullaxe minimizes intermediate copies
@@ -402,16 +402,16 @@ result = (
 
 ---
 
-## 🧪 Testing and Quality Assurance
+## Testing and Quality Assurance
 
 Nullaxe includes comprehensive test coverage with 118+ test cases covering:
 
-- ✅ pandas and polars compatibility
-- ✅ Edge cases and error handling
-- ✅ Performance optimization
-- ✅ Data integrity preservation
-- ✅ Type safety and validation
-- ✅ Presentation formatting (currency, percentage, thousands, truncation, datetime, column casing)
+- pandas and polars compatibility
+- Edge cases and error handling
+- Performance optimization
+- Data integrity preservation
+- Type safety and validation
+- Presentation formatting (currency, percentage, thousands, truncation, datetime, column casing)
 
 Run tests locally:
 ```bash
@@ -423,7 +423,7 @@ pytest tests/
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Nullaxe is designed to be extensible and community-driven.
 
@@ -462,42 +462,42 @@ Nullaxe's modular architecture makes it easy to add new cleaning functions:
 
 ---
 
-## 📋 Changelog
+## Changelog
 
-- Migration: replace `import sanex as nlx` with `import nullaxe as nlx` and `sx(` with `nlx(`
+- Migration: replace `import sanex as sx` with `import nullaxe as nlx` and `sx(` with `nlx(`
 ### Version 0.3.0
-- ✨ Added `format_for_display` function + chain method for presentation formatting
-- ✨ Added support for currency, percentage, thousands, truncate, datetime formatting
-- ✨ Title-case header option integrated into formatting step
-- 🛠 Refactored internal formatting for pandas + polars parity
-- ✅ Expanded test suite (now 118+ tests) including display formatting
-- ⚡ Improved thousands formatting (no trailing .0 on whole floats)
+- Added `format_for_display` function + chain method for presentation formatting
+- Added support for currency, percentage, thousands, truncate, datetime formatting
+- Title-case header option integrated into formatting step
+- Refactored internal formatting for pandas + polars parity
+- Expanded test suite (now 118+ tests) including display formatting
+- Improved thousands formatting (no trailing .0 on whole floats)
 
 ### Version 0.2.0
-- ✨ Added comprehensive data extraction capabilities
-- ✨ Enhanced outlier detection with multiple methods
-- ✨ Improved text processing and punctuation removal
-- 🐛 Fixed boolean standardization edge cases
-- 🐛 Resolved missing data handling in complex workflows
-- ⚡ Performance optimizations for large datasets
-- 📚 Comprehensive documentation updates
+- Added comprehensive data extraction capabilities
+- Enhanced outlier detection with multiple methods
+- Improved text processing and punctuation removal
+- Fixed boolean standardization edge cases
+- Resolved missing data handling in complex workflows
+- Performance optimizations for large datasets
+- Comprehensive documentation updates
 
 ### Version 0.1.0
-- 🎉 Initial release with core cleaning functionality
-- 🔗 Chainable API implementation
-- 🔄 pandas and polars support
+- Initial release with core cleaning functionality
+- Chainable API implementation
+- pandas and polars support
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
-- Built with ❤️ for the data science community
+- Built with love for the data science community
 - Inspired by the need for simple, powerful data cleaning tools
 - Thanks to all contributors and users who help improve Nullaxe
 
@@ -505,8 +505,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
 
-**Made with ❤️ by [John Tocci](https://github.com/johntocci)**
+**Made with love by [John Tocci](https://github.com/johntocci)**
 
-[⭐ Star us on GitHub](https://github.com/johntocci/nullaxe) | [🐛 Report Issues](https://github.com/johntocci/nullaxe/issues) | [💡 Request Features](https://github.com/johntocci/nullaxe/issues)
+[Star us on GitHub](https://github.com/johntocci/nullaxe) | [Report Issues](https://github.com/johntocci/nullaxe/issues) | [Request Features](https://github.com/johntocci/nullaxe/issues)
 
 </div>
