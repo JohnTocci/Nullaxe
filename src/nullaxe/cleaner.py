@@ -11,7 +11,8 @@ from .functions import (
     remove_special_characters, remove_emojis, remove_non_ascii,
     remove_non_alphanumeric, remove_non_numeric, remove_pii,
     remove_stopwords, flag_for_review, format_for_display,
-    extract_urls, remove_html, infer_types, extract_currency)
+    extract_urls, remove_html, infer_types, extract_currency,
+    standardize_units)
 
 import pandas as pd
 import polars as pl
@@ -597,6 +598,25 @@ class Nullaxe:
         """
         self._df = extract_currency(self._df, subset=subset)
         return self
+
+    def standardize_units(self, subset: Optional[List[str]] = None, target_unit: str = 'metric'):
+        """
+        Standardizes units of measurement in specified columns to a target unit system.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for unit standardization.
+            Defaults to None (all columns).
+        target_unit (str): The target unit system to standardize to. Supported values are 'metric' and 'imperial'.
+            Defaults to 'metric'.
+
+        Returns:
+            Nullaxe: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = standardize_units(self._df, subset=subset, target_unit=target_unit)
+        return self
+
 
     def to_df(self) -> DataFrameType:
         """

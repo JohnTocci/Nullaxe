@@ -26,6 +26,7 @@ from ._extract_urls import extract_urls
 from ._remove_html import remove_html
 from ._infer_types import infer_types
 from ._extract_currency import extract_currency
+from ._standardize_units import standardize_units
 
 
 __all__ = [
@@ -68,5 +69,6 @@ __all__ = [
     "extract_urls",
     "remove_html",
     "infer_types",
-    "extract_currency"
+    "extract_currency",
+    "standardize_units",
 ]
