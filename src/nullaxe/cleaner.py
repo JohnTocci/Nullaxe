@@ -11,7 +11,7 @@ from .functions import (
     remove_special_characters, remove_emojis, remove_non_ascii,
     remove_non_alphanumeric, remove_non_numeric, remove_pii,
     remove_stopwords, flag_for_review, format_for_display,
-    extract_urls, remove_html, infer_types)
+    extract_urls, remove_html, infer_types, extract_currency)
 
 import pandas as pd
 import polars as pl
@@ -580,6 +580,22 @@ class Nullaxe:
                     self._df = self._df.with_columns(
                         pl.col(col).cast(pl.Datetime, strict=False).alias(col)
                     )
+        return self
+
+    def extract_currency(self, subset: Optional[List[str]] = None):
+        """
+        Extracts currency values from string entries in the DataFrame and places them in new columns.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for currency extraction.
+            Defaults to None (all columns).
+
+        Returns:
+            Nullaxe: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = extract_currency(self._df, subset=subset)
         return self
 
     def to_df(self) -> DataFrameType:
