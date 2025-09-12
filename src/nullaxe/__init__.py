@@ -2,7 +2,7 @@ from .cleaner import Nullaxe
 from .functions import *  # noqa
 import sys
 
-__version__ = "0.4.2"
+__version__ = "0.5.0"
 __author__ = "John Tocci"
 __email__ = "john@johntocci.com"
 __license__ = "MIT"

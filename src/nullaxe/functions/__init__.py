@@ -22,6 +22,9 @@ from ._remove_pii import remove_pii
 from ._remove_stopwords import remove_stopwords
 from ._flag_for_review import flag_for_review
 from ._format_for_display import format_for_display
+from ._extract_urls import extract_urls
+from ._remove_html import remove_html
+from ._infer_types import infer_types
 
 
 __all__ = [
@@ -60,5 +63,8 @@ __all__ = [
     "remove_pii",
     "remove_stopwords",
     "flag_for_review",
-    "format_for_display"
+    "format_for_display",
+    "extract_urls",
+    "remove_html",
+    "infer_types",
 ]

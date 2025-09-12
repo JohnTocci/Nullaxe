@@ -10,7 +10,9 @@ from .functions import (
     extract_with_regex, extract_phone_numbers, remove_punctuation,
     remove_special_characters, remove_emojis, remove_non_ascii,
     remove_non_alphanumeric, remove_non_numeric, remove_pii,
-    remove_stopwords, flag_for_review, format_for_display)
+    remove_stopwords, flag_for_review, format_for_display,
+    extract_urls, remove_html, infer_types)
+
 import pandas as pd
 import polars as pl
 from typing import Union, List, Optional
@@ -508,6 +510,76 @@ class Nullaxe:
         This is a chainable method.
         """
         self._df = format_for_display(self._df, rules=rules, column_case=column_case)
+        return self
+
+    def extract_urls(self, subset: Optional[List[str]] = None):
+        """
+        Extracts URLs from string entries in the DataFrame and places them in new columns.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for URL extraction.
+            Defaults to None (all columns).
+
+        Returns:
+            Nullaxe: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        if subset is None:
+            if isinstance(self._df, pd.DataFrame):
+                subset = list(self._df.columns)
+            else:
+                subset = self._df.columns
+        self._df = extract_urls(self._df, subset=subset)
+        return self
+
+    def remove_html(self, subset: Optional[List[str]] = None):
+        """
+        Removes HTML tags from string entries in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for HTML tag removal.
+            Defaults to None (all columns).
+
+        Returns:
+            Nullaxe: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        self._df = remove_html(self._df, subset=subset)
+        return self
+
+    def infer_types(self, subset: Optional[List[str]] = None):
+        """
+        Infers and converts the data types of columns in the DataFrame.
+
+        Parameters:
+        subset (List[str], optional): List of column names to consider for type inference.
+            Defaults to None (all columns).
+
+        Returns:
+            Nullaxe: The instance of the class to allow method chaining.
+
+        This is a chainable method.
+        """
+        if isinstance(self._df, pd.DataFrame):
+            self._df = self._df.convert_dtypes()
+            if subset:
+                for col in subset:
+                    if col in self._df.columns:
+                        self._df[col] = pd.to_numeric(self._df[col], errors='ignore')
+                        self._df[col] = pd.to_datetime(self._df[col], errors='ignore')
+        elif isinstance(self._df, pl.DataFrame):
+            if subset is None:
+                subset = self._df.columns
+            for col in subset:
+                if col in self._df.columns:
+                    self._df = self._df.with_columns(
+                        pl.col(col).cast(pl.Float64, strict=False).alias(col)
+                    )
+                    self._df = self._df.with_columns(
+                        pl.col(col).cast(pl.Datetime, strict=False).alias(col)
+                    )
         return self
 
     def to_df(self) -> DataFrameType:
